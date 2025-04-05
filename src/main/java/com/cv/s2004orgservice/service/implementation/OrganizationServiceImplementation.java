@@ -7,7 +7,7 @@ import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.OrganizationDto;
 import com.cv.s2002orgservicepojo.entity.Organization;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.OrganizationRepository;
 import com.cv.s2004orgservice.service.intrface.OrganizationService;
 import com.cv.s2004orgservice.service.mapper.OrganizationMapper;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = UAMConstant.APP_NAVIGATION_API_ORGANIZATION)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_ORGANIZATION)
 @Transactional(rollbackOn = Exception.class)
 public class OrganizationServiceImplementation implements OrganizationService {
     private final OrganizationRepository repository;

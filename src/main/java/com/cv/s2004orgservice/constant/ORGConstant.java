@@ -1,14 +1,20 @@
 package com.cv.s2004orgservice.constant;
 
-public class UAMConstant {
+public class ORGConstant {
 
 
     public static final String APP_NAVIGATION_API_MENU = "/api/org-service/menu";
     public static final String APP_NAVIGATION_API_ORGANIZATION = "/api/org-service/organization";
     public static final String APP_NAVIGATION_API_MENU_TREE = "/menu-tree";
     public static final String APP_NAVIGATION_API_SIGNUP = "/api/org-service/sign-up";
+    public static final String APP_NAVIGATION_API_AUTHENTICATION = "/api/org-service/authentication";
+    public static final String APP_NAVIGATION_API_AUTHENTICATION_LOGIN = "/login";
+    public static final String APP_NAVIGATION_API_AUTHENTICATION_REFRESH_TOKEN = "/refresh-token";
+    public static final String APP_NAVIGATION_API_AUTHENTICATION_LOGOUT = "/logout";
     public static final String APP_NAVIGATION_API_USER_DETAIL = "/api/org-service/user";
+    public static final String APP_NAVIGATION_API_USER_DETAIL_COUNT = "/count";
     public static final String APP_NAVIGATION_API_ROLE = "/api/org-service/role";
+    public static final String APP_NAVIGATION_API_ROLE_LOAD_MENU = "/load-role-menu";
     public static final String APP_NAVIGATION_API_PASSWORD = "/api/org-service/password";
     public static final String APP_NAVIGATION_API_PERMISSION = "/api/org-service/permission";
 

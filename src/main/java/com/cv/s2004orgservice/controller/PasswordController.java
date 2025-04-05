@@ -5,7 +5,7 @@ import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2002orgservicepojo.dto.PasswordDto;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.PasswordService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
@@ -17,7 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(UAMConstant.APP_NAVIGATION_API_PASSWORD)
+@RequestMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD)
 @AllArgsConstructor
 @Slf4j
 public class PasswordController implements GenericController<PasswordDto> {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface MenuRepository extends GenericRepository, GenericSpecification<Menu>,
@@ -17,4 +18,8 @@ public interface MenuRepository extends GenericRepository, GenericSpecification<
     List<Menu> findAllByMenuTypeAndStatus(Integer menuType, Boolean status);
 
     Optional<List<Menu>> findAllByRootMenuIdAndMenuTypeAndStatus(String rootMenuId, Integer menuType, Boolean status);
+
+    Optional<List<Menu>> findAllByRootMenuIdAndStatusTrue(String rootMenuId);
+
+    Optional<List<Menu>> findAllByStatusTrueAndIdIn(Set<String> ids);
 }

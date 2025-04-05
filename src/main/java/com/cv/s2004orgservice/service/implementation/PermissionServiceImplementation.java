@@ -7,7 +7,7 @@ import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.PermissionDto;
 import com.cv.s2002orgservicepojo.entity.Permission;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.PermissionRepository;
 import com.cv.s2004orgservice.service.intrface.PermissionService;
 import com.cv.s2004orgservice.service.mapper.PermissionMapper;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = UAMConstant.APP_NAVIGATION_API_PERMISSION)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_PERMISSION)
 @Transactional(rollbackOn = Exception.class)
 public class PermissionServiceImplementation implements PermissionService {
     private final PermissionRepository repository;

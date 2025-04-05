@@ -8,7 +8,7 @@ import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.UserDetailDto;
 import com.cv.s2002orgservicepojo.entity.Role;
 import com.cv.s2002orgservicepojo.entity.UserDetail;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.RoleRepository;
 import com.cv.s2004orgservice.repository.UserDetailRepository;
 import com.cv.s2004orgservice.service.intrface.UserDetailService;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = UAMConstant.APP_NAVIGATION_API_USER_DETAIL)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_USER_DETAIL)
 @Slf4j
 @Transactional(rollbackOn = Exception.class)
 public class UserDetailServiceImplementation implements UserDetailService {
@@ -119,5 +119,10 @@ public class UserDetailServiceImplementation implements UserDetailService {
                         UserDetail.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.code.004", true))
                 .stream().collect(Collectors.toMap(UserDetail::getId, UserDetail::getName));
+    }
+
+    @Override
+    public Long getCount() throws Exception {
+        return repository.count();
     }
 }

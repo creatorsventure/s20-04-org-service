@@ -5,7 +5,7 @@ import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2002orgservicepojo.dto.UserDetailDto;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.UserDetailService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 
 @RestController
-@RequestMapping(UAMConstant.APP_NAVIGATION_API_USER_DETAIL)
+@RequestMapping(ORGConstant.APP_NAVIGATION_API_USER_DETAIL)
 @AllArgsConstructor
 @Slf4j
 public class UserDetailController implements GenericController<UserDetailDto> {
@@ -97,6 +97,16 @@ public class UserDetailController implements GenericController<UserDetailDto> {
             return StaticUtil.getSuccessResponse(service.readIdAndNameMap(), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
             log.error("UserDetailController.readIdNameMapping {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_USER_DETAIL_COUNT)
+    public ResponseEntity<Object> getCount() {
+        try {
+            return StaticUtil.getSuccessResponse(service.getCount(), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("UserDetailController.getCount {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }

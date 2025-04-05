@@ -8,7 +8,7 @@ import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.MenuDto;
 import com.cv.s2002orgservicepojo.dto.MenuTreeDto;
 import com.cv.s2002orgservicepojo.entity.Menu;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.MenuRepository;
 import com.cv.s2004orgservice.service.intrface.MenuService;
 import com.cv.s2004orgservice.service.mapper.MenuMapper;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = UAMConstant.APP_NAVIGATION_API_MENU)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_MENU)
 @Transactional(rollbackOn = Exception.class)
 public class MenuServiceImplementation implements MenuService {
 
@@ -108,10 +108,10 @@ public class MenuServiceImplementation implements MenuService {
     @Override
     public List<MenuTreeDto> readMenuAsTree() throws Exception {
         List<Menu> parents = repository.findAllByMenuTypeAndStatus(
-                UAMConstant.MENU_TYPE_PARENT, ApplicationConstant.APPLICATION_STATUS_ACTIVE);
+                ORGConstant.MENU_TYPE_PARENT, ApplicationConstant.APPLICATION_STATUS_ACTIVE);
 
         List<Menu> children = repository.findAllByMenuTypeAndStatus(
-                UAMConstant.MENU_TYPE_CHILD, ApplicationConstant.APPLICATION_STATUS_ACTIVE);
+                ORGConstant.MENU_TYPE_CHILD, ApplicationConstant.APPLICATION_STATUS_ACTIVE);
 
         // Group child menus by rootMenuId for faster lookup
         Map<String, List<Menu>> childrenByRootMenuId = children.stream()

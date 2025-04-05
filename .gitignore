@@ -8,6 +8,7 @@ target/
 config/db
 config/log
 .DS_Store
+.p12
 
 ### STS ###
 .apt_generated

@@ -6,11 +6,12 @@ import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.RoleDto;
+import com.cv.s2002orgservicepojo.dto.SideNaveDto;
 import com.cv.s2002orgservicepojo.entity.Menu;
 import com.cv.s2002orgservicepojo.entity.Organization;
 import com.cv.s2002orgservicepojo.entity.Permission;
 import com.cv.s2002orgservicepojo.entity.Role;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.MenuRepository;
 import com.cv.s2004orgservice.repository.OrganizationRepository;
 import com.cv.s2004orgservice.repository.PermissionRepository;
@@ -26,14 +27,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = UAMConstant.APP_NAVIGATION_API_ROLE)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_ROLE)
 @Transactional(rollbackOn = Exception.class)
 public class RoleServiceImplementation implements RoleService {
     private final RoleRepository repository;
@@ -43,6 +42,7 @@ public class RoleServiceImplementation implements RoleService {
     private final OrganizationRepository organizationRepository;
     private final PermissionRepository permissionRepository;
     private final MenuRepository menuRepository;
+    private final RoleRepository roleRepository;
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
@@ -144,10 +144,10 @@ public class RoleServiceImplementation implements RoleService {
             menuList.add(menu);
 
             // If it's a parent menu, fetch and add its children
-            if (UAMConstant.MENU_TYPE_PARENT == menu.getMenuType()) {
+            if (ORGConstant.MENU_TYPE_PARENT == menu.getMenuType()) {
                 var children = menuRepository.findAllByRootMenuIdAndMenuTypeAndStatus(
                         menu.getId(),
-                        UAMConstant.MENU_TYPE_CHILD,
+                        ORGConstant.MENU_TYPE_CHILD,
                         ApplicationConstant.APPLICATION_STATUS_ACTIVE
                 ).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
 
@@ -156,5 +156,94 @@ public class RoleServiceImplementation implements RoleService {
         }
         entity.setMenuList(menuList);
 
+    }
+
+    @Override
+    public List<SideNaveDto> loadRoleMenu(List<String> roleIds) throws Exception {
+        Set<Menu> rootMenus = new HashSet<>();
+        Set<Menu> childMenus = new HashSet<>();
+
+        // Step 1: Load all roles in one pass, avoid repeated DB calls
+        List<Role> roles = roleRepository.findAllByStatusTrueAndIdIn(roleIds)
+                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+
+        // Step 2: Classify menus
+        roles.stream()
+                .flatMap(role -> role.getMenuList().stream())
+                .forEach(menu -> {
+                    if (ApplicationConstant.APPLICATION_NOT_APPLICABLE.equals(menu.getRootMenuId())) {
+                        rootMenus.add(menu);
+                    } else {
+                        childMenus.add(menu);
+                    }
+                });
+
+        // Step 3: Precompute root menu IDs to avoid repeated scanning
+        Set<String> rootMenuIds = rootMenus.stream()
+                .map(Menu::getId)
+                .collect(Collectors.toSet());
+
+        // Step 4: Fetch missing submenus for root menus (only for those without linked children)
+        Set<String> missingSubmenuRootIds = rootMenus.stream()
+                .filter(root -> childMenus.stream().noneMatch(sub -> root.getId().equals(sub.getRootMenuId())))
+                .map(Menu::getId)
+                .collect(Collectors.toSet());
+
+        for (String rootId : missingSubmenuRootIds) {
+            List<Menu> subMenusFromDb = menuRepository.findAllByRootMenuIdAndStatusTrue(rootId)
+                    .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+            childMenus.addAll(subMenusFromDb);
+        }
+
+        // Step 5: Fetch missing root menus for child menus
+        Set<String> missingRootIds = childMenus.stream()
+                .map(Menu::getRootMenuId)
+                .filter(Objects::nonNull)
+                .filter(rootId -> !rootMenuIds.contains(rootId))
+                .collect(Collectors.toSet());
+
+        if (!missingRootIds.isEmpty()) {
+            List<Menu> missingRootMenus = menuRepository.findAllByStatusTrueAndIdIn(missingRootIds)
+                    .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+            rootMenus.addAll(missingRootMenus);
+        }
+
+        return buildSideNavTree(rootMenus, childMenus);
+    }
+
+    private List<SideNaveDto> buildSideNavTree(Set<Menu> rootMenus, Set<Menu> childMenus) {
+        // Convert child menus to a map grouped by rootMenuId
+        Map<String, List<Menu>> childrenByRootId = childMenus.stream()
+                .filter(menu -> menu.getRootMenuId() != null)
+                .collect(Collectors.groupingBy(Menu::getRootMenuId));
+
+        // Build the SideNaveDto tree
+        return rootMenus.stream()
+                .sorted(Comparator.comparingInt(Menu::getDisplayPosition))
+                .map(root -> {
+                    SideNaveDto rootDto = convertToDto(root);
+
+                    List<Menu> subMenus = childrenByRootId.getOrDefault(root.getId(), Collections.emptyList());
+
+                    List<SideNaveDto> childDtos = subMenus.stream()
+                            .sorted(Comparator.comparingInt(Menu::getDisplayPosition))
+                            .map(this::convertToDto)
+                            .collect(Collectors.toList());
+
+                    rootDto.setSubMenuList(childDtos);
+                    return rootDto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private SideNaveDto convertToDto(Menu menu) {
+        return SideNaveDto.builder()
+                .title(menu.getName())
+                .path(menu.getPath())
+                .icon(menu.getIcon())
+                .iconType(menu.getIconType())
+                .iconTheme(menu.getIconTheme())
+                .subMenuList(new ArrayList<>())
+                .build();
     }
 }

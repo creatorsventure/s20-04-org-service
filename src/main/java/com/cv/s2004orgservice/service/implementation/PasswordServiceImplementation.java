@@ -7,7 +7,7 @@ import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.PasswordDto;
 import com.cv.s2002orgservicepojo.entity.Password;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.PasswordRepository;
 import com.cv.s2004orgservice.service.intrface.PasswordService;
 import com.cv.s2004orgservice.service.mapper.PasswordMapper;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = UAMConstant.APP_NAVIGATION_API_PASSWORD)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_PASSWORD)
 @Transactional(rollbackOn = Exception.class)
 public class PasswordServiceImplementation implements PasswordService {
 

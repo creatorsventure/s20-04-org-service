@@ -5,7 +5,7 @@ import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2002orgservicepojo.dto.RoleDto;
-import com.cv.s2004orgservice.constant.UAMConstant;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.RoleService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
@@ -16,8 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(UAMConstant.APP_NAVIGATION_API_ROLE)
+@RequestMapping(ORGConstant.APP_NAVIGATION_API_ROLE)
 @AllArgsConstructor
 @Slf4j
 public class RoleController implements GenericController<RoleDto> {
@@ -105,6 +107,16 @@ public class RoleController implements GenericController<RoleDto> {
             return StaticUtil.getSuccessResponse(service.delete(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
             log.error("RoleController.delete {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @PostMapping(ORGConstant.APP_NAVIGATION_API_ROLE_LOAD_MENU)
+    public ResponseEntity<Object> loadRoleMenu(@RequestBody List<String> roleIds) {
+        try {
+            return StaticUtil.getSuccessResponse(service.loadRoleMenu(roleIds), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("RoleController.loadRoleMenu {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
