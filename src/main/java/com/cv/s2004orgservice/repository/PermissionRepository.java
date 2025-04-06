@@ -13,5 +13,5 @@ import java.util.Optional;
 @Repository
 public interface PermissionRepository extends GenericRepository, GenericSpecification<Permission>,
         JpaRepository<Permission, String>, JpaSpecificationExecutor<Permission> {
-    Optional<List<Permission>> findAllByStatusAndIdIn(Boolean status, List<String> ids);
+    Optional<List<Permission>> findAllByStatusTrueAndIdIn(List<String> ids);
 }

@@ -1,6 +1,5 @@
 package com.cv.s2004orgservice.service.implementation;
 
-import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
@@ -50,7 +49,7 @@ public class MenuServiceImplementation implements MenuService {
             BeanUtils.copyProperties(dto, entity);
             repository.save(entity);
             return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -60,15 +59,14 @@ public class MenuServiceImplementation implements MenuService {
             entity.setStatus(status);
             repository.save(entity);
             return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public MenuDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatus(
-                        id, ApplicationConstant.APPLICATION_STATUS_ACTIVE, Menu.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        return mapper.toDto(repository.findByIdAndStatusTrue(id, Menu.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -97,21 +95,17 @@ public class MenuServiceImplementation implements MenuService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public Map<String, String> readIdAndNameMap() throws Exception {
-        return repository.findAllByStatus(
-                        ApplicationConstant.APPLICATION_STATUS_ACTIVE,
-                        Menu.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true))
+        return repository.findAllByStatusTrue(Menu.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
                 .stream().collect(Collectors.toMap(Menu::getId, Menu::getName));
     }
 
 
     @Override
     public List<MenuTreeDto> readMenuAsTree() throws Exception {
-        List<Menu> parents = repository.findAllByMenuTypeAndStatus(
-                ORGConstant.MENU_TYPE_PARENT, ApplicationConstant.APPLICATION_STATUS_ACTIVE);
+        List<Menu> parents = repository.findAllByMenuTypeAndStatusTrue(ORGConstant.MENU_TYPE_PARENT);
 
-        List<Menu> children = repository.findAllByMenuTypeAndStatus(
-                ORGConstant.MENU_TYPE_CHILD, ApplicationConstant.APPLICATION_STATUS_ACTIVE);
+        List<Menu> children = repository.findAllByMenuTypeAndStatusTrue(ORGConstant.MENU_TYPE_CHILD);
 
         // Group child menus by rootMenuId for faster lookup
         Map<String, List<Menu>> childrenByRootMenuId = children.stream()

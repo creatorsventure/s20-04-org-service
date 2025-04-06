@@ -2,7 +2,7 @@ package com.cv.s2004orgservice.controller;
 
 import com.cv.s10coreservice.dto.AuthInfoDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
-import com.cv.s10coreservice.exception.ApplicationException;
+import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.AuthenticationService;
 import com.cv.s2004orgservice.util.StaticUtil;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private AuthenticationService authenticationService;
+    private ExceptionComponent exceptionComponent;
 
     @PostMapping(ORGConstant.APP_NAVIGATION_API_AUTHENTICATION_LOGIN)
     public ResponseEntity<Object> login(@RequestBody @Valid AuthInfoDto dto, BindingResult result) {
@@ -33,7 +34,7 @@ public class AuthenticationController {
                 log.info("AuthenticationController.login {}", result.getAllErrors());
                 return StaticUtil.getFailureResponse(result);
             } else if (!StringUtils.hasText(dto.getUserId()) || !StringUtils.hasText(dto.getPassword())) {
-                return StaticUtil.getFailureResponse(new ApplicationException("invalid username or password"));
+                return StaticUtil.getFailureResponse(exceptionComponent.expose("app.message.failure.credential.invalid", true));
             }
             return StaticUtil.getSuccessResponse(authenticationService.login(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
@@ -49,7 +50,7 @@ public class AuthenticationController {
                 log.info("AuthenticationController.refreshToken {}", result.getAllErrors());
                 return StaticUtil.getFailureResponse(result);
             } else if (!StringUtils.hasText(dto.getUserId()) || !StringUtils.hasText(dto.getRefreshToken())) {
-                return StaticUtil.getFailureResponse(new ApplicationException("invalid username"));
+                return StaticUtil.getFailureResponse(exceptionComponent.expose("app.message.failure.credential.invalid", true));
             }
             return StaticUtil.getSuccessResponse(authenticationService.refreshToken(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
@@ -65,7 +66,7 @@ public class AuthenticationController {
                 log.info("AuthenticationController.logout {}", result.getAllErrors());
                 return StaticUtil.getFailureResponse(result);
             } else if (!StringUtils.hasText(dto.getUserId()) || !StringUtils.hasText(dto.getRefreshToken())) {
-                return StaticUtil.getFailureResponse(new ApplicationException("invalid username"));
+                return StaticUtil.getFailureResponse(exceptionComponent.expose("app.message.failure.credential.invalid", true));
             }
             return StaticUtil.getSuccessResponse(authenticationService.logout(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {

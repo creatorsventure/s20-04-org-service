@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: s20-04-org-service
+#Server
+server:
+  port: 8020
+

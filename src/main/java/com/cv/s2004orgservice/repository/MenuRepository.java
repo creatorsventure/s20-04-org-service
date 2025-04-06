@@ -15,11 +15,10 @@ import java.util.Set;
 public interface MenuRepository extends GenericRepository, GenericSpecification<Menu>,
         JpaRepository<Menu, String>, JpaSpecificationExecutor<Menu> {
 
-    List<Menu> findAllByMenuTypeAndStatus(Integer menuType, Boolean status);
+    List<Menu> findAllByMenuTypeAndStatusTrue(Integer menuType);
 
-    Optional<List<Menu>> findAllByRootMenuIdAndMenuTypeAndStatus(String rootMenuId, Integer menuType, Boolean status);
+    Optional<List<Menu>> findAllByRootMenuIdAndMenuTypeAndStatusTrue(String rootMenuId, Integer menuType);
 
     Optional<List<Menu>> findAllByRootMenuIdAndStatusTrue(String rootMenuId);
 
-    Optional<List<Menu>> findAllByStatusTrueAndIdIn(Set<String> ids);
 }

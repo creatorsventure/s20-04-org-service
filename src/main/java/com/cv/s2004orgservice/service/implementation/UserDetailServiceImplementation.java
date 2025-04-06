@@ -1,6 +1,5 @@
 package com.cv.s2004orgservice.service.implementation;
 
-import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
@@ -43,11 +42,10 @@ public class UserDetailServiceImplementation implements UserDetailService {
     @Override
     public UserDetailDto create(UserDetailDto dto) throws Exception {
         var entity = mapper.toEntity(dto);
-        entity.setRoleList(roleRepository.findAllByStatusAndIdIn(
-                ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+        entity.setRoleList(roleRepository.findAllByStatusTrueAndIdIn(
                 dto.getSelectedRoleIds(),
                 Role.class
-        ).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
         return mapper.toDto(repository.save(entity));
     }
 
@@ -57,15 +55,14 @@ public class UserDetailServiceImplementation implements UserDetailService {
         return mapper.toDto(repository.findById(dto.getId()).map(entity -> {
             BeanUtils.copyProperties(dto, entity);
             entity.setRoleList(dto.getSelectedRoleIds().stream()
-                    .map(roleId -> roleRepository.findByIdAndStatus(
+                    .map(roleId -> roleRepository.findByIdAndStatusTrue(
                                     roleId,
-                                    ApplicationConstant.APPLICATION_STATUS_ACTIVE,
                                     Role.class)
-                            .orElseThrow(() -> exceptionComponent.expose("app.code.004", true)))
+                            .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)))
                     .collect(Collectors.toList()));
             repository.save(entity);
             return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -75,19 +72,19 @@ public class UserDetailServiceImplementation implements UserDetailService {
             entity.setStatus(status);
             repository.save(entity);
             return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public UserDetailDto readOne(String id) throws Exception {
-        return repository.findByIdAndStatus(id, ApplicationConstant.APPLICATION_STATUS_ACTIVE, UserDetail.class)
+        return repository.findByIdAndStatusTrue(id, UserDetail.class)
                 .map(entity -> {
                     var dto = mapper.toDto(entity);
                     dto.setSelectedRoleIds(entity.getRoleList().stream().map(Role::getId).toList());
                     return dto;
                 })
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -114,10 +111,9 @@ public class UserDetailServiceImplementation implements UserDetailService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public Map<String, String> readIdAndNameMap() throws Exception {
-        return repository.findAllByStatus(
-                        ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+        return repository.findAllByStatusTrue(
                         UserDetail.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true))
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
                 .stream().collect(Collectors.toMap(UserDetail::getId, UserDetail::getName));
     }
 

@@ -1,6 +1,5 @@
 package com.cv.s2004orgservice.service.implementation;
 
-import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
@@ -45,7 +44,7 @@ public class PermissionServiceImplementation implements PermissionService {
             BeanUtils.copyProperties(dto, entity);
             repository.save(entity);
             return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -55,13 +54,14 @@ public class PermissionServiceImplementation implements PermissionService {
             entity.setStatus(status);
             repository.save(entity);
             return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public PermissionDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatus(id, ApplicationConstant.APPLICATION_STATUS_ACTIVE, Permission.class).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        return mapper.toDto(repository.findByIdAndStatusTrue(id, Permission.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -88,10 +88,9 @@ public class PermissionServiceImplementation implements PermissionService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public Map<String, String> readIdAndNameMap() throws Exception {
-        return repository.findAllByStatus(
-                        ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+        return repository.findAllByStatusTrue(
                         Permission.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true))
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
                 .stream().collect(Collectors.toMap(Permission::getId, Permission::getName));
     }
 }

@@ -40,7 +40,7 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
     public AuthInfoDto login(AuthInfoDto dto) throws Exception {
         var userEntity = userDetailRepository.findByUserIdAndStatusTrue(dto.getUserId())
                 .filter(entity -> passwordEncoder.matches(dto.getPassword(), entity.getPassword().getHashPassword()))
-                .orElseThrow(() -> exceptionComponent.expose("app.code.028", true));
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.credential.invalid", true));
         userEntity.setLastLogin(LocalDateTime.now());
         userEntity = userDetailRepository.save(userEntity);
         return createAuthInfoDto(userEntity);
@@ -49,20 +49,20 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
     @Override
     public AuthInfoDto refreshToken(AuthInfoDto dto) throws Exception {
         if (!jwtComponent.isTokenValid(dto.getRefreshToken())) {
-            throw exceptionComponent.expose("app.code.004", true);
+            throw exceptionComponent.expose("app.message.failure.object.unavailable", true);
         }
         var storedToken = tokenRepository.findByTokenHashAndRevokedFalse(
                         sha256HashComponent.hash(dto.getRefreshToken()))
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
 
         if (storedToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw exceptionComponent.expose("Refresh token expired", true);
+            throw exceptionComponent.expose("app.message.failure.token.expired", true);
         }
         // Revoke old token (rotation)
         storedToken.setRevoked(true);
         tokenRepository.save(storedToken);
         var userEntity = userDetailRepository.findByUserIdAndStatusTrue(dto.getUserId())
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
         return createAuthInfoDto(userEntity);
     }
 

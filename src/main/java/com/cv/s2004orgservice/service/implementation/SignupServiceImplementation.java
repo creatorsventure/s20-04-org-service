@@ -48,14 +48,12 @@ public class SignupServiceImplementation implements SignupService {
                     .description(signupDto.getOrganizationCode() + "_role")
                     .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
                     .organizationList(List.of(organizationEntity))
-                    .permissionList(permissionRepository.findAllByStatus(
-                            ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+                    .permissionList(permissionRepository.findAllByStatusTrue(
                             Permission.class
-                    ).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)))
-                    .menuList(menuRepository.findAllByStatus(
-                            ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+                    ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)))
+                    .menuList(menuRepository.findAllByStatusTrue(
                             Menu.class
-                    ).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)))
+                    ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)))
                     .build();
             roleEntity = roleRepository.save(roleEntity);
 
@@ -80,7 +78,7 @@ public class SignupServiceImplementation implements SignupService {
                     .build());
             return true;
         } else {
-            throw new Exception(exceptionComponent.expose("app.code.004", true));
+            throw new Exception(exceptionComponent.expose("app.message.failure.user.exists", true));
         }
     }
 

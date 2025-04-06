@@ -60,7 +60,7 @@ public class RoleServiceImplementation implements RoleService {
             createRoleEntity(dto, entity);
             repository.save(entity);
             return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -70,13 +70,13 @@ public class RoleServiceImplementation implements RoleService {
             entity.setStatus(status);
             repository.save(entity);
             return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public RoleDto readOne(String id) throws Exception {
-        return repository.findByIdAndStatus(id, ApplicationConstant.APPLICATION_STATUS_ACTIVE, Role.class)
+        return repository.findByIdAndStatusTrue(id, Role.class)
                 .map(entity -> {
                     RoleDto dto = mapper.toDto(entity);
                     dto.setSelectedOrganizationIds(entity.getOrganizationList().stream().map(Organization::getId).toList());
@@ -84,7 +84,7 @@ public class RoleServiceImplementation implements RoleService {
                     dto.setSelectedMenuIds(entity.getMenuList().stream().map(Menu::getId).toList());
                     return dto;
                 })
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -111,45 +111,39 @@ public class RoleServiceImplementation implements RoleService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public Map<String, String> readIdAndNameMap() throws Exception {
-        return repository.findAllByStatus(
-                        ApplicationConstant.APPLICATION_STATUS_ACTIVE,
-                        Role.class
-                )
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true))
+        return repository.findAllByStatusTrue(Role.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
                 .stream().collect(Collectors.toMap(Role::getId, Role::getName));
     }
 
     private void createRoleEntity(RoleDto dto, Role entity) {
         // Set Organization
-        var organizations = organizationRepository.findAllByStatusAndIdIn(
-                ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+        var organizations = organizationRepository.findAllByStatusTrueAndIdIn(
                 dto.getSelectedOrganizationIds(),
                 Organization.class
-        ).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
         entity.setOrganizationList(organizations);
 
         // Set Permissions
-        var permissions = permissionRepository.findAllByStatusAndIdIn(
-                ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+        var permissions = permissionRepository.findAllByStatusTrueAndIdIn(
                 dto.getSelectedPermissionIds()
-        ).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
         entity.setPermissionList(permissions);
 
         // Process and Set Menus
         List<Menu> menuList = new ArrayList<>();
         for (String menuId : dto.getSelectedMenuIds()) {
-            var menu = menuRepository.findByIdAndStatus(menuId, ApplicationConstant.APPLICATION_STATUS_ACTIVE, Menu.class)
-                    .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+            var menu = menuRepository.findByIdAndStatusTrue(menuId, Menu.class)
+                    .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
 
             menuList.add(menu);
 
             // If it's a parent menu, fetch and add its children
             if (ORGConstant.MENU_TYPE_PARENT == menu.getMenuType()) {
-                var children = menuRepository.findAllByRootMenuIdAndMenuTypeAndStatus(
+                var children = menuRepository.findAllByRootMenuIdAndMenuTypeAndStatusTrue(
                         menu.getId(),
-                        ORGConstant.MENU_TYPE_CHILD,
-                        ApplicationConstant.APPLICATION_STATUS_ACTIVE
-                ).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+                        ORGConstant.MENU_TYPE_CHILD
+                ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
 
                 menuList.addAll(children);
             }
@@ -165,7 +159,7 @@ public class RoleServiceImplementation implements RoleService {
 
         // Step 1: Load all roles in one pass, avoid repeated DB calls
         List<Role> roles = roleRepository.findAllByStatusTrueAndIdIn(roleIds)
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
 
         // Step 2: Classify menus
         roles.stream()
@@ -191,20 +185,20 @@ public class RoleServiceImplementation implements RoleService {
 
         for (String rootId : missingSubmenuRootIds) {
             List<Menu> subMenusFromDb = menuRepository.findAllByRootMenuIdAndStatusTrue(rootId)
-                    .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+                    .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
             childMenus.addAll(subMenusFromDb);
         }
 
         // Step 5: Fetch missing root menus for child menus
-        Set<String> missingRootIds = childMenus.stream()
+        List<String> missingRootIds = childMenus.stream()
                 .map(Menu::getRootMenuId)
                 .filter(Objects::nonNull)
                 .filter(rootId -> !rootMenuIds.contains(rootId))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         if (!missingRootIds.isEmpty()) {
-            List<Menu> missingRootMenus = menuRepository.findAllByStatusTrueAndIdIn(missingRootIds)
-                    .orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+            List<Menu> missingRootMenus = menuRepository.findAllByStatusTrueAndIdIn(missingRootIds, Menu.class)
+                    .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
             rootMenus.addAll(missingRootMenus);
         }
 

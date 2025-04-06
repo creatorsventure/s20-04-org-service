@@ -101,16 +101,6 @@ public class UserDetailController implements GenericController<UserDetailDto> {
         }
     }
 
-    @GetMapping(ORGConstant.APP_NAVIGATION_API_USER_DETAIL_COUNT)
-    public ResponseEntity<Object> getCount() {
-        try {
-            return StaticUtil.getSuccessResponse(service.getCount(), APIResponseType.OBJECT_ONE);
-        } catch (Exception e) {
-            log.error("UserDetailController.getCount {}", ExceptionUtils.getStackTrace(e));
-            return StaticUtil.getFailureResponse(e);
-        }
-    }
-
     @DeleteMapping
     @Override
     public ResponseEntity<Object> delete(@RequestParam String id) {
@@ -118,6 +108,16 @@ public class UserDetailController implements GenericController<UserDetailDto> {
             return StaticUtil.getSuccessResponse(service.delete(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
             log.error("UserDetailController.delete {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_USER_DETAIL_COUNT)
+    public ResponseEntity<Object> getCount() {
+        try {
+            return StaticUtil.getSuccessResponse(service.getCount(), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("UserDetailController.getCount {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }

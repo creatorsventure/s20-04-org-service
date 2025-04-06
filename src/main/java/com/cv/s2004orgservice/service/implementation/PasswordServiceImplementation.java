@@ -1,6 +1,5 @@
 package com.cv.s2004orgservice.service.implementation;
 
-import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
@@ -46,7 +45,7 @@ public class PasswordServiceImplementation implements PasswordService {
             BeanUtils.copyProperties(dto, entity);
             repository.save(entity);
             return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -56,14 +55,14 @@ public class PasswordServiceImplementation implements PasswordService {
             entity.setStatus(status);
             repository.save(entity);
             return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public PasswordDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatus(id, ApplicationConstant.APPLICATION_STATUS_ACTIVE, Password.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        return mapper.toDto(repository.findByIdAndStatusTrue(id, Password.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -92,10 +91,9 @@ public class PasswordServiceImplementation implements PasswordService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public Map<String, String> readIdAndNameMap() throws Exception {
-        return repository.findAllByStatus(
-                        ApplicationConstant.APPLICATION_STATUS_ACTIVE,
+        return repository.findAllByStatusTrue(
                         Password.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.code.004", true))
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
                 .stream().collect(Collectors.toMap(Password::getId, Password::getName));
     }
 
