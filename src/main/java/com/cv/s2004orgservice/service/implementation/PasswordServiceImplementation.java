@@ -1,26 +1,19 @@
 package com.cv.s2004orgservice.service.implementation;
 
-import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
-import com.cv.s10coreservice.service.function.StaticFunction;
-import com.cv.s10coreservice.util.StaticUtil;
+import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s2002orgservicepojo.dto.PasswordDto;
-import com.cv.s2002orgservicepojo.entity.Password;
 import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.PasswordRepository;
+import com.cv.s2004orgservice.repository.UserDetailRepository;
 import com.cv.s2004orgservice.service.intrface.PasswordService;
 import com.cv.s2004orgservice.service.mapper.PasswordMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -31,70 +24,22 @@ public class PasswordServiceImplementation implements PasswordService {
     private final PasswordRepository repository;
     private final PasswordMapper mapper;
     private final ExceptionComponent exceptionComponent;
+    private final UserDetailRepository userDetailRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final HybridEncryptionComponent encryptionComponent;
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
-    @Override
-    public PasswordDto create(PasswordDto dto) throws Exception {
-        return mapper.toDto(repository.save(mapper.toEntity(dto)));
-    }
-
-    @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
-    @Override
-    public PasswordDto update(PasswordDto dto) throws Exception {
-        return mapper.toDto(repository.findById(dto.getId()).map(entity -> {
-            BeanUtils.copyProperties(dto, entity);
-            repository.save(entity);
-            return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
-    }
-
-    @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
-    @Override
-    public Boolean updateStatus(String id, boolean status) throws Exception {
-        return repository.findById(id).map(entity -> {
-            entity.setStatus(status);
-            repository.save(entity);
-            return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
-    }
-
-    @Cacheable(keyGenerator = "cacheKeyGenerator")
-    @Override
-    public PasswordDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatusTrue(id, Password.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
-    }
-
-    @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
-    @Override
-    public Boolean delete(String id) throws Exception {
-        repository.deleteById(id);
-        return true;
-    }
-
-    @Cacheable(keyGenerator = "cacheKeyGenerator")
-    @Override
-    public PaginationDto readAll(PaginationDto dto) throws Exception {
-        Page<Password> page;
-        if (StaticUtil.isSearchRequest(dto.getSearchField(), dto.getSearchValue())) {
-            page = repository.findAll(
-                    repository.searchSpec(dto.getSearchField(), dto.getSearchValue()),
-                    StaticFunction.generatePageRequest.apply(dto));
-        } else {
-            page = repository.findAll(StaticFunction.generatePageRequest.apply(dto));
+    public PasswordDto changePassword(PasswordDto dto) throws Exception {
+        var entity = mapper.toEntity(dto);
+        var userEntity = userDetailRepository.findByUserIdAndStatusTrue(dto.getUserDetailId())
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
+        if (passwordEncoder.matches(dto.getPassword(), userEntity.getPassword().getHashPassword())) {
+            throw exceptionComponent.expose("app.message.failure.same.password", true);
         }
-        dto.setTotal(page.getTotalElements());
-        dto.setResult(page.stream().map(mapper::toDto).collect(Collectors.toList()));
-        return dto;
-    }
-
-    @Cacheable(keyGenerator = "cacheKeyGenerator")
-    @Override
-    public Map<String, String> readIdAndNameMap() throws Exception {
-        return repository.findAllByStatusTrue(
-                        Password.class)
-                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
-                .stream().collect(Collectors.toMap(Password::getId, Password::getName));
+        entity.setHashPassword(passwordEncoder.encode(dto.getPassword()));
+        entity.setEncryptedPassword(encryptionComponent.encrypt(dto.getPassword()));
+        entity.setUserDetail(userEntity);
+        return mapper.toDto(repository.save(entity));
     }
 
 

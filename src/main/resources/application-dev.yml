@@ -1,7 +1,8 @@
 spring:
   application:
     name: s20-04-org-service
+  #config:
+    #import: classpath:ValidationMessages.properties
 #Server
 server:
   port: 8020
-
