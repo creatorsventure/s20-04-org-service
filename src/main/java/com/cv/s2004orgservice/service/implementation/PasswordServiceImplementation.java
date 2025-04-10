@@ -36,6 +36,7 @@ public class PasswordServiceImplementation implements PasswordService {
         if (passwordEncoder.matches(dto.getPassword(), userEntity.getPassword().getHashPassword())) {
             throw exceptionComponent.expose("app.message.failure.same.password", true);
         }
+        entity.setId(userEntity.getPassword().getId());
         entity.setHashPassword(passwordEncoder.encode(dto.getPassword()));
         entity.setEncryptedPassword(encryptionComponent.encrypt(dto.getPassword()));
         entity.setUserDetail(userEntity);

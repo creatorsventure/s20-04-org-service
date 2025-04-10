@@ -80,6 +80,7 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
     private AuthInfoDto createAuthInfoDto(UserDetail userDetail) throws Exception {
         return AuthInfoDto.builder()
                 .userId(userDetail.getUserId())
+                .name(userDetail.getName())
                 .email(userDetail.getEmail())
                 .roleIds(userDetail.getRoleList().stream().map(Role::getId).collect(Collectors.toList()))
                 .organizationIds(
