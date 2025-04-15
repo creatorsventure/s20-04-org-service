@@ -1,7 +1,11 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.s0402notifyservicepojo.dto.RecipientDto;
+import com.cv.s0402notifyservicepojo.helper.NotifiyHelper;
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
+import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.UserDetailDto;
@@ -10,6 +14,7 @@ import com.cv.s2002orgservicepojo.entity.UserDetail;
 import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.RoleRepository;
 import com.cv.s2004orgservice.repository.UserDetailRepository;
+import com.cv.s2004orgservice.service.component.KafkaProducer;
 import com.cv.s2004orgservice.service.intrface.UserDetailService;
 import com.cv.s2004orgservice.service.mapper.UserDetailMapper;
 import jakarta.transaction.Transactional;
@@ -19,9 +24,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -33,10 +40,12 @@ import java.util.stream.Collectors;
 public class UserDetailServiceImplementation implements UserDetailService {
 
     private final UserDetailRepository repository;
+    private final RoleRepository roleRepository;
     private final UserDetailMapper mapper;
     private final ExceptionComponent exceptionComponent;
-
-    private final RoleRepository roleRepository;
+    private final KafkaProducer kafkaProducer;
+    private final Environment environment;
+    private final HybridEncryptionComponent encryptionComponent;
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
@@ -46,7 +55,20 @@ public class UserDetailServiceImplementation implements UserDetailService {
                 dto.getSelectedRoleIds(),
                 Role.class
         ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
-        return mapper.toDto(repository.save(entity));
+        entity = repository.save(entity);
+        kafkaProducer.notify(NotifiyHelper.notifyPasswordReset(
+                RecipientDto.builder()
+                        .name(entity.getName())
+                        .email(entity.getEmail())
+                        .mobileNumber(entity.getMobileNumber())
+                        .countryCode(entity.getCountryCode())
+                        .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
+                        .build(),
+                Locale.ENGLISH,
+                environment.getProperty("app.api-gateway.org-service.reset-password-url") + encryptionComponent.encrypt(entity.getId()),
+                entity.getId()
+        ));
+        return mapper.toDto(entity);
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)

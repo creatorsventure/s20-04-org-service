@@ -56,7 +56,7 @@
         <spring-cloud.version>2024.0.1</spring-cloud.version>
 
         <org-service-pojo-version>0.0.48-SNAPSHOT</org-service-pojo-version>
-        <notify-service-pojo-version>0.0.26-SNAPSHOT</notify-service-pojo-version>
+        <notify-service-pojo-version>0.0.28-SNAPSHOT</notify-service-pojo-version>
     </properties>
     <dependencies>
         <dependency>

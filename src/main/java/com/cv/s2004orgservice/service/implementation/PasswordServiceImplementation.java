@@ -38,7 +38,6 @@ public class PasswordServiceImplementation implements PasswordService {
     private final HybridEncryptionComponent encryptionComponent;
     private final KafkaProducer kafkaProducer;
     private final Environment environment;
-    private final PasswordRepository passwordRepository;
 
     public PasswordDto changePassword(PasswordDto dto) throws Exception {
         var entity = mapper.toEntity(dto);
