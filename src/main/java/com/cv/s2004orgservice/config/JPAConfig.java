@@ -17,9 +17,10 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 @Configuration
-@EntityScan(
-        basePackages = {"com.cv.s10coreservice.entity", "com.cv.s2002orgservicepojo.entity"}
-)
+@EntityScan(basePackages = {
+        "com.cv.s10coreservice.entity",
+        "com.cv.s2002orgservicepojo.entity"
+})
 @EnableJpaRepositories("com.cv.s2004orgservice.repository")
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider", dateTimeProviderRef = "dateTimeProvider")
 public class JPAConfig {

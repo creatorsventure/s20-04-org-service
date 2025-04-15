@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD)
@@ -34,6 +31,40 @@ public class PasswordController {
             return StaticUtil.getSuccessResponse(service.changePassword(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
             log.error("PasswordController.changePassword {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_ACTIVATE_ACCOUNT)
+    public ResponseEntity<Object> activateAccount(@RequestParam String id) throws Exception {
+        try {
+            return StaticUtil.getSuccessResponse(service.activateAccount(id), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("PasswordController.activateAccount {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_FORGOT)
+    public ResponseEntity<Object> forgotPassword(@RequestParam String userId) throws Exception {
+        try {
+            return StaticUtil.getSuccessResponse(service.forgotPassword(userId), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("PasswordController.forgotPassword {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @PostMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_RESET)
+    public ResponseEntity<Object> resetPassword(@RequestBody @Valid PasswordDto dto, BindingResult result) {
+        try {
+            if (result.hasErrors()) {
+                log.info("PasswordController.resetPassword {}", result.getAllErrors());
+                return StaticUtil.getFailureResponse(result);
+            }
+            return StaticUtil.getSuccessResponse(service.resetPassword(dto), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("PasswordController.resetPassword {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }

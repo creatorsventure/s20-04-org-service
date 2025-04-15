@@ -16,6 +16,9 @@ public class ORGConstant {
     public static final String APP_NAVIGATION_API_ROLE = "/api/org-service/role";
     public static final String APP_NAVIGATION_API_ROLE_LOAD_MENU = "/load-role-menu";
     public static final String APP_NAVIGATION_API_PASSWORD = "/api/org-service/password";
+    public static final String APP_NAVIGATION_API_PASSWORD_ACTIVATE_ACCOUNT = "/activate-account";
+    public static final String APP_NAVIGATION_API_PASSWORD_FORGOT = "/forgot-password";
+    public static final String APP_NAVIGATION_API_PASSWORD_RESET = "/reset-password";
     public static final String APP_NAVIGATION_API_PERMISSION = "/api/org-service/permission";
 
     public static final int MENU_TYPE_PARENT = 1;

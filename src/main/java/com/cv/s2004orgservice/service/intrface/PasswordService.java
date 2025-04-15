@@ -7,4 +7,11 @@ public interface PasswordService {
 
     PasswordDto changePassword(PasswordDto dto) throws Exception;
 
+    boolean activateAccount(String id) throws Exception;
+
+    boolean forgotPassword(String userId) throws Exception;
+
+    boolean resetPassword(PasswordDto dto) throws Exception;
+
+
 }
