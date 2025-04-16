@@ -23,4 +23,6 @@ public class ORGConstant {
 
     public static final int MENU_TYPE_PARENT = 1;
     public static final int MENU_TYPE_CHILD = 2;
+
+    public static final String X_HEADER_USER_ID = "X-USER-ID";
 }

@@ -1,7 +1,10 @@
 package com.cv.s2004orgservice.config;
 
 import com.cv.s10coreservice.constant.ApplicationConstant;
+import com.cv.s10coreservice.util.StaticUtil;
+import com.cv.s2004orgservice.constant.ORGConstant;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
+@Slf4j
 @Configuration
 @EntityScan(basePackages = {
         "com.cv.s10coreservice.entity",
@@ -40,7 +44,13 @@ public class JPAConfig {
     @Bean
     AuditorAware<String> auditorProvider() {
         return () -> {
-            return Optional.of(ApplicationConstant.APPLICATION_UNKNOWN_USER);
+            try {
+                return Optional.of(StaticUtil.extractHeader(ORGConstant.X_HEADER_USER_ID));
+            } catch (Exception e) {
+                log.error("Error in getting auditor provider", e);
+                return Optional.of(ApplicationConstant.APPLICATION_UNKNOWN_USER);
+            }
+
         };
     }
 

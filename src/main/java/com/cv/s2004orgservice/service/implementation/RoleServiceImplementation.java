@@ -165,7 +165,7 @@ public class RoleServiceImplementation implements RoleService {
         roles.stream()
                 .flatMap(role -> role.getMenuList().stream())
                 .forEach(menu -> {
-                    if (ApplicationConstant.APPLICATION_NOT_APPLICABLE.equals(menu.getRootMenuId())) {
+                    if (ApplicationConstant.NOT_APPLICABLE.equals(menu.getRootMenuId())) {
                         rootMenus.add(menu);
                     } else {
                         childMenus.add(menu);
