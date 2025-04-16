@@ -55,7 +55,7 @@
         <org.projectlombok.version>1.18.36</org.projectlombok.version>
         <spring-cloud.version>2024.0.1</spring-cloud.version>
 
-        <org-service-pojo-version>0.0.47-SNAPSHOT</org-service-pojo-version>
+        <org-service-pojo-version>0.0.206-SNAPSHOT</org-service-pojo-version>
     </properties>
     <dependencies>
         <dependency>
@@ -140,6 +140,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.9</version>
         </dependency>
     </dependencies>
 

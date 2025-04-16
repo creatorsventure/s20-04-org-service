@@ -2,11 +2,16 @@
 
 #Run project using bash 5 above. E.g. [bash ./generate.sh]
 clear
-core_package_root="com.cv.s01coreservice"
-pojo_package_root="com.cv.s0202orgservicepojo"
-module_package_root="com.cv.s0204orgservice"
-module_package_folder_root="src/main/java/com/cv/s0204orgservice"
-moduleName="organization"
+#core_package_root="com.cv.s01coreservice"
+#pojo_package_root="com.cv.s0202orgservicepojo"
+#module_package_root="com.cv.s0204orgservice"
+
+core_package_root="com.cv.s10coreservice"
+pojo_package_root="com.cv.s2002orgservicepojo"
+module_package_root="com.cv.s2004orgservice"
+
+module_package_folder_root="src/main/java/com/cv/s2004orgservice"
+moduleName="binconfig"
 clear
 echo "================================================================================================================="
 echo "Selected Module Name: $moduleName"

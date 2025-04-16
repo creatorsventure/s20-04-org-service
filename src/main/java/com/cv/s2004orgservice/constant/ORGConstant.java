@@ -17,7 +17,12 @@ public class ORGConstant {
     public static final String APP_NAVIGATION_API_ROLE_LOAD_MENU = "/load-role-menu";
     public static final String APP_NAVIGATION_API_PASSWORD = "/api/org-service/password";
     public static final String APP_NAVIGATION_API_PERMISSION = "/api/org-service/permission";
+    public static final String APP_NAVIGATION_API_BINCONFIG = "/api/org-service/bin";
+    public static final String APP_NAVIGATION_API_BINCONFIG_INSERT_ALL = "/addall";
+    public static final String APP_NAVIGATION_API_BINCONFIG_FILE_PROCESS = "/fileprocess";
 
     public static final int MENU_TYPE_PARENT = 1;
     public static final int MENU_TYPE_CHILD = 2;
+
+
 }
