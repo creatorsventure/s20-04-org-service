@@ -43,7 +43,7 @@ public class PasswordServiceImplementation implements PasswordService {
 
     public PasswordDto changePassword(PasswordDto dto) throws Exception {
         var entity = mapper.toEntity(dto);
-        var userEntity = userDetailRepository.findByUserIdAndStatusTrue(dto.getUserDetailId())
+        var userEntity = userDetailRepository.findByUserIdIgnoreCaseAndStatusTrue(dto.getUserDetailId())
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
         constructEntity(dto, entity, userEntity);
         return mapper.toDto(repository.save(entity));
@@ -67,7 +67,7 @@ public class PasswordServiceImplementation implements PasswordService {
 
     @Override
     public boolean forgotPassword(String userId) throws Exception {
-        var entity = userDetailRepository.findByUserIdAndStatusTrue(userId)
+        var entity = userDetailRepository.findByUserIdIgnoreCaseAndStatusTrue(userId)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
         entity.getPassword().setModifiedAt(LocalDateTime.now());
         entity.getPassword().setStatus(ApplicationConstant.APPLICATION_STATUS_INACTIVE);

@@ -38,7 +38,7 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
 
     @Override
     public AuthInfoDto login(AuthInfoDto dto) throws Exception {
-        var userEntity = userDetailRepository.findByUserIdAndStatusTrue(dto.getUserId())
+        var userEntity = userDetailRepository.findByUserIdIgnoreCaseAndStatusTrue(dto.getUserId())
                 .filter(entity -> passwordEncoder.matches(dto.getPassword(), entity.getPassword().getHashPassword()))
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.credential.invalid", true));
         userEntity.setLastLogin(LocalDateTime.now());
@@ -61,7 +61,7 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
         // Revoke old token (rotation)
         storedToken.setRevoked(true);
         tokenRepository.save(storedToken);
-        var userEntity = userDetailRepository.findByUserIdAndStatusTrue(dto.getUserId())
+        var userEntity = userDetailRepository.findByUserIdIgnoreCaseAndStatusTrue(dto.getUserId())
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
         return createAuthInfoDto(userEntity);
     }

@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface UserDetailRepository extends GenericRepository, GenericSpecification<UserDetail>,
         JpaRepository<UserDetail, String>, JpaSpecificationExecutor<UserDetail> {
 
-    Optional<UserDetail> findByUserIdAndStatusTrue(String username);
+    Optional<UserDetail> findByUserIdIgnoreCaseAndStatusTrue(String username);
 }
