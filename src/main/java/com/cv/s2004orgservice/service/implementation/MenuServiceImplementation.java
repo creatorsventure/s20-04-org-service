@@ -114,19 +114,18 @@ public class MenuServiceImplementation implements MenuService {
         return parents.stream()
                 .map(parent -> MenuTreeDto.builder()
                         .key(parent.getId())
-                        .title(parent.getPath())
+                        .title(parent.getName())
                         .expanded(true)
                         .children(
                                 childrenByRootMenuId.getOrDefault(parent.getId(), Collections.emptyList())
                                         .stream()
                                         .map(child -> MenuTreeDto.builder()
                                                 .key(child.getId())
-                                                .title(child.getPath())
+                                                .title(child.getName())
                                                 .isLeaf(true)
                                                 .build())
                                         .collect(Collectors.toList())
-                        )
-                        .build())
+                        ).build())
                 .collect(Collectors.toList());
     }
 }

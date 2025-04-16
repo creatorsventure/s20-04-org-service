@@ -13,5 +13,6 @@ public interface PasswordService {
 
     boolean resetPassword(PasswordDto dto) throws Exception;
 
+    boolean resendPasswordEmail(String id) throws Exception;
 
 }

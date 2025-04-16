@@ -69,4 +69,14 @@ public class PasswordController {
         }
     }
 
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_RESEND_EMAIL)
+    public ResponseEntity<Object> resendPasswordEmail(@RequestParam String id) {
+        try {
+            return StaticUtil.getSuccessResponse(service.resendPasswordEmail(id), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("PasswordController.resendPasswordEmail {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
 }

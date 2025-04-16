@@ -81,7 +81,11 @@ public class RoleServiceImplementation implements RoleService {
                     RoleDto dto = mapper.toDto(entity);
                     dto.setSelectedOrganizationIds(entity.getOrganizationList().stream().map(Organization::getId).toList());
                     dto.setSelectedPermissionIds(entity.getPermissionList().stream().map(Permission::getId).toList());
-                    dto.setSelectedMenuIds(entity.getMenuList().stream().map(Menu::getId).toList());
+                    try {
+                        dto.setSelectedMenuIds(loadMenuIdsForEdit(entity));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     return dto;
                 })
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
@@ -114,6 +118,50 @@ public class RoleServiceImplementation implements RoleService {
         return repository.findAllByStatusTrue(Role.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
                 .stream().collect(Collectors.toMap(Role::getId, Role::getName));
+    }
+
+    private List<String> loadMenuIdsForEdit(Role entity) throws Exception {
+        // Fetch all active menus
+        List<Menu> allMenus = menuRepository.findAllByStatusTrue(Menu.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
+
+        // Build a lookup for selected menu IDs
+        Set<String> selectedMenuIds = entity.getMenuList().stream()
+                .map(Menu::getId)
+                .collect(Collectors.toSet());
+
+        // Group child menus by their rootMenuId
+        Map<String, List<Menu>> childMenusByRoot = allMenus.stream()
+                .filter(menu -> menu.getMenuType().equals(ApplicationConstant.MENU_TYPE_CHILD))
+                .collect(Collectors.groupingBy(Menu::getRootMenuId));
+
+        Set<String> finalSelectedIds = new HashSet<>();
+
+        // Process root menus that have children
+        childMenusByRoot.forEach((rootId, children) -> {
+            boolean allSelected = children.stream()
+                    .map(Menu::getId)
+                    .allMatch(selectedMenuIds::contains);
+
+            if (allSelected) {
+                finalSelectedIds.add(rootId);
+            } else {
+                children.stream()
+                        .map(Menu::getId)
+                        .filter(selectedMenuIds::contains)
+                        .forEach(finalSelectedIds::add);
+            }
+        });
+
+        // Handle selected root menus with no children
+        Set<String> rootsWithChildren = childMenusByRoot.keySet();
+
+        entity.getMenuList().stream()
+                .filter(menu -> menu.getMenuType().equals(ApplicationConstant.MENU_TYPE_PARENT))
+                .filter(menu -> !rootsWithChildren.contains(menu.getId())) // no children
+                .map(Menu::getId)
+                .forEach(finalSelectedIds::add);
+        return new ArrayList<>(finalSelectedIds);
     }
 
     private void createRoleEntity(RoleDto dto, Role entity) {

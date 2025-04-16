@@ -143,4 +143,5 @@ public class UserDetailServiceImplementation implements UserDetailService {
     public Long getCount() throws Exception {
         return repository.count();
     }
+
 }

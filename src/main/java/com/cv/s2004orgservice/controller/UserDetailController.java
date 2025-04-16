@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
-
 @RestController
 @RequestMapping(ORGConstant.APP_NAVIGATION_API_USER_DETAIL)
 @AllArgsConstructor
@@ -70,7 +68,6 @@ public class UserDetailController implements GenericController<UserDetailDto> {
     @Override
     public ResponseEntity<Object> readOne(@RequestParam String id) {
         try {
-            Thread.sleep(Duration.ofMinutes(5).toMillis());
             log.info("UserDetailController.readOne {}", id);
             return StaticUtil.getSuccessResponse(service.readOne(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
@@ -121,4 +118,5 @@ public class UserDetailController implements GenericController<UserDetailDto> {
             return StaticUtil.getFailureResponse(e);
         }
     }
+
 }

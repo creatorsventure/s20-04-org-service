@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -38,6 +39,7 @@ public class PasswordServiceImplementation implements PasswordService {
     private final HybridEncryptionComponent encryptionComponent;
     private final KafkaProducer kafkaProducer;
     private final Environment environment;
+    private final PasswordRepository passwordRepository;
 
     public PasswordDto changePassword(PasswordDto dto) throws Exception {
         var entity = mapper.toEntity(dto);
@@ -70,19 +72,7 @@ public class PasswordServiceImplementation implements PasswordService {
         entity.getPassword().setModifiedAt(LocalDateTime.now());
         entity.getPassword().setStatus(ApplicationConstant.APPLICATION_STATUS_INACTIVE);
         userDetailRepository.save(entity);
-        kafkaProducer.notify(NotifiyHelper.notifyPasswordReset(
-                RecipientDto.builder()
-                        .name(entity.getName())
-                        .email(entity.getEmail())
-                        .mobileNumber(entity.getMobileNumber())
-                        .countryCode(entity.getCountryCode())
-                        .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
-                        .build(),
-                Locale.ENGLISH,
-                environment.getProperty("app.api-gateway.org-service.reset-password-url") + encryptionComponent.encrypt(entity.getId()),
-                entity.getId()
-        ));
-        return true;
+        return sendPasswordResetEmail(entity);
     }
 
     @Override
@@ -98,6 +88,38 @@ public class PasswordServiceImplementation implements PasswordService {
             repository.save(entity);
             return true;
         }
+    }
+
+    @Override
+    public boolean resendPasswordEmail(String id) throws Exception {
+        var entity = userDetailRepository.findByIdAndStatusTrue(id, UserDetail.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
+        String tempPassword = UUID.randomUUID().toString();
+        passwordRepository.save(Password.builder()
+                .name(entity.getName())
+                .modifiedAt(LocalDateTime.now())
+                .status(ApplicationConstant.APPLICATION_STATUS_INACTIVE)
+                .encryptedPassword(encryptionComponent.encrypt(tempPassword))
+                .hashPassword(passwordEncoder.encode(tempPassword))
+                .userDetail(entity)
+                .build());
+        return sendPasswordResetEmail(entity);
+    }
+
+    private boolean sendPasswordResetEmail(UserDetail entity) throws Exception {
+        kafkaProducer.notify(NotifiyHelper.notifyPasswordReset(
+                RecipientDto.builder()
+                        .name(entity.getName())
+                        .email(entity.getEmail())
+                        .mobileNumber(entity.getMobileNumber())
+                        .countryCode(entity.getCountryCode())
+                        .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
+                        .build(),
+                Locale.ENGLISH,
+                environment.getProperty("app.api-gateway.org-service.reset-password-url") + encryptionComponent.encrypt(entity.getId()),
+                entity.getId()
+        ));
+        return true;
     }
 
     private void constructEntity(PasswordDto dto, Password entity, UserDetail userEntity) throws Exception {
