@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -94,15 +95,22 @@ public class PasswordServiceImplementation implements PasswordService {
     public boolean resendPasswordEmail(String id) throws Exception {
         var entity = userDetailRepository.findByIdAndStatusTrue(id, UserDetail.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
-        String tempPassword = UUID.randomUUID().toString();
-        passwordRepository.save(Password.builder()
-                .name(entity.getName())
-                .modifiedAt(LocalDateTime.now())
-                .status(ApplicationConstant.APPLICATION_STATUS_INACTIVE)
-                .encryptedPassword(encryptionComponent.encrypt(tempPassword))
-                .hashPassword(passwordEncoder.encode(tempPassword))
-                .userDetail(entity)
-                .build());
+        if (Optional.ofNullable(entity.getPassword()).isPresent()) {
+            entity.getPassword().setStatus(ApplicationConstant.APPLICATION_STATUS_INACTIVE);
+            entity.setModifiedAt(LocalDateTime.now());
+            userDetailRepository.save(entity);
+        } else {
+            String tempPassword = UUID.randomUUID().toString();
+            passwordRepository.save(Password.builder()
+                    .name(entity.getName())
+                    .modifiedAt(LocalDateTime.now())
+                    .status(ApplicationConstant.APPLICATION_STATUS_INACTIVE)
+                    .encryptedPassword(encryptionComponent.encrypt(tempPassword))
+                    .hashPassword(passwordEncoder.encode(tempPassword))
+                    .userDetail(entity)
+                    .build());
+        }
+
         return sendPasswordResetEmail(entity);
     }
 
