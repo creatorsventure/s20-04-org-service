@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.hibernate.TransientObjectException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class ServiceExceptionAspect {
 
             return result;
 
-        } catch (DataAccessException | ConstraintViolationException dbEx) {
+        } catch (DataAccessException | ConstraintViolationException | TransientObjectException dbEx) {
             log.error("❌ DB Exception in {}.{}: {}", className, methodName, ExceptionUtils.getStackTrace(dbEx));
             throw exceptionComponent.expose("app.message.failure.db.error", true);
         } catch (Exception ex) {

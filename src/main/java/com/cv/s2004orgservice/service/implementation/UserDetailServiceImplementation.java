@@ -9,9 +9,11 @@ import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.UserDetailDto;
+import com.cv.s2002orgservicepojo.entity.Password;
 import com.cv.s2002orgservicepojo.entity.Role;
 import com.cv.s2002orgservicepojo.entity.UserDetail;
 import com.cv.s2004orgservice.constant.ORGConstant;
+import com.cv.s2004orgservice.repository.PasswordRepository;
 import com.cv.s2004orgservice.repository.RoleRepository;
 import com.cv.s2004orgservice.repository.UserDetailRepository;
 import com.cv.s2004orgservice.service.component.KafkaProducer;
@@ -26,10 +28,13 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +51,8 @@ public class UserDetailServiceImplementation implements UserDetailService {
     private final KafkaProducer kafkaProducer;
     private final Environment environment;
     private final HybridEncryptionComponent encryptionComponent;
+    private final PasswordRepository passwordRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
@@ -55,7 +62,16 @@ public class UserDetailServiceImplementation implements UserDetailService {
                 dto.getSelectedRoleIds(),
                 Role.class
         ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
+        String tempPassword = UUID.randomUUID().toString();
         entity = repository.save(entity);
+        passwordRepository.save(Password.builder()
+                .name(entity.getName())
+                .modifiedAt(LocalDateTime.now())
+                .status(ApplicationConstant.APPLICATION_STATUS_INACTIVE)
+                .encryptedPassword(encryptionComponent.encrypt(tempPassword))
+                .hashPassword(passwordEncoder.encode(tempPassword))
+                .userDetail(entity)
+                .build());
         kafkaProducer.notify(NotifiyHelper.notifyPasswordReset(
                 RecipientDto.builder()
                         .name(entity.getName())
