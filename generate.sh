@@ -6,7 +6,7 @@ core_package_root="com.cv.s01coreservice"
 pojo_package_root="com.cv.s0202orgservicepojo"
 module_package_root="com.cv.s0204orgservice"
 module_package_folder_root="src/main/java/com/cv/s0204orgservice"
-moduleName="organization"
+moduleName="BankUnit"
 clear
 echo "================================================================================================================="
 echo "Selected Module Name: $moduleName"

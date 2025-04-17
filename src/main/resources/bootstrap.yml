@@ -4,4 +4,4 @@ spring:
   config:
     import: ${CONFIG_SERVER_URL}
   profiles:
-    active: dev # dev/prod/test
+    active: dev
