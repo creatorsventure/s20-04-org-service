@@ -4,9 +4,9 @@ import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
-import com.cv.s2002orgservicepojo.dto.BankUnitDto;
+import com.cv.s2002orgservicepojo.dto.UnitDto;
 import com.cv.s2004orgservice.constant.ORGConstant;
-import com.cv.s2004orgservice.service.intrface.BankUnitService;
+import com.cv.s2004orgservice.service.intrface.UnitService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,39 +17,39 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_BANK_UNIT)
+@RequestMapping(ORGConstant.APP_NAVIGATION_API_UNIT)
 @AllArgsConstructor
 @Slf4j
-public class BankUnitController implements GenericController<BankUnitDto> {
+public class UnitController implements GenericController<UnitDto> {
 
-    private BankUnitService service;
+    private UnitService service;
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@RequestBody @Valid BankUnitDto dto, BindingResult result) {
+    public ResponseEntity<Object> create(@RequestBody @Valid UnitDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
-                log.info("BankUnitController.create {}", result.getAllErrors());
+                log.info("UnitController.create {}", result.getAllErrors());
                 return StaticUtil.getFailureResponse(result);
             }
             return StaticUtil.getSuccessResponse(service.create(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("BankUnitController.create {}", ExceptionUtils.getStackTrace(e));
+            log.error("UnitController.create {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
 
     @PutMapping
     @Override
-    public ResponseEntity<Object> update(@RequestBody @Valid BankUnitDto dto, BindingResult result) {
+    public ResponseEntity<Object> update(@RequestBody @Valid UnitDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
-                log.info("BankUnitController.update {}", result.getAllErrors());
+                log.info("UnitController.update {}", result.getAllErrors());
                 return StaticUtil.getFailureResponse(result);
             }
             return StaticUtil.getSuccessResponse(service.update(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("BankUnitController.update {}", ExceptionUtils.getStackTrace(e));
+            log.error("UnitController.update {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -60,7 +60,7 @@ public class BankUnitController implements GenericController<BankUnitDto> {
         try {
             return StaticUtil.getSuccessResponse(service.updateStatus(id, status), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("BankUnitController.updateStatus {}", ExceptionUtils.getStackTrace(e));
+            log.error("UnitController.updateStatus {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -69,10 +69,10 @@ public class BankUnitController implements GenericController<BankUnitDto> {
     @Override
     public ResponseEntity<Object> readOne(@RequestParam String id) {
         try {
-            log.info("BankUnitController.readOne {}", id);
+            log.info("UnitController.readOne {}", id);
             return StaticUtil.getSuccessResponse(service.readOne(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("BankUnitController.readOne {}", ExceptionUtils.getStackTrace(e));
+            log.error("UnitController.readOne {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -83,7 +83,7 @@ public class BankUnitController implements GenericController<BankUnitDto> {
         try {
             return StaticUtil.getSuccessResponse(service.readAll(dto), APIResponseType.OBJECT_LIST);
         } catch (Exception e) {
-            log.error("BankUnitController.readPage {}", ExceptionUtils.getStackTrace(e));
+            log.error("UnitController.readPage {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -94,7 +94,7 @@ public class BankUnitController implements GenericController<BankUnitDto> {
         try {
             return StaticUtil.getSuccessResponse(service.readIdAndNameMap(), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("BankUnitController.readIdNameMapping {}", ExceptionUtils.getStackTrace(e));
+            log.error("UnitController.readIdNameMapping {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -105,7 +105,7 @@ public class BankUnitController implements GenericController<BankUnitDto> {
         try {
             return StaticUtil.getSuccessResponse(service.delete(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("BankUnitController.delete {}", ExceptionUtils.getStackTrace(e));
+            log.error("UnitController.delete {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }

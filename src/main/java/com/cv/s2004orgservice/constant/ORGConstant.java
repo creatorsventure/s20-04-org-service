@@ -22,7 +22,12 @@ public class ORGConstant {
     public static final String APP_NAVIGATION_API_PASSWORD_RESEND_EMAIL = "/resend-password-email";
     public static final String APP_NAVIGATION_API_PERMISSION = "/api/org-service/permission";
     public static final String APP_NAVIGATION_API_SCHEME = "/api/org-service/scheme";
-    public static final String APP_NAVIGATION_API_BANK_UNIT = "/api/org-service/bank-unit";
+    public static final String APP_NAVIGATION_API_UNIT = "/api/org-service/unit";
+    public static final String APP_NAVIGATION_API_ACTION = "/api/org-service/action";
+    public static final String APP_NAVIGATION_API_CURRENCY = "/api/org-service/currency";
+    public static final String APP_NAVIGATION_API_OPTION = "/api/org-service/option";
+    public static final String APP_NAVIGATION_API_MERCHANT_CATEGORY = "/api/org-service/merchant-category";
+    public static final String APP_NAVIGATION_API_ENGINE = "/api/org-service/engine";
 
     public static final int MENU_TYPE_PARENT = 1;
     public static final int MENU_TYPE_CHILD = 2;

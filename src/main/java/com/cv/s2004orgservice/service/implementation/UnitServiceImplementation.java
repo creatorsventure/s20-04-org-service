@@ -4,12 +4,12 @@ import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
-import com.cv.s2002orgservicepojo.dto.BankUnitDto;
-import com.cv.s2002orgservicepojo.entity.BankUnit;
+import com.cv.s2002orgservicepojo.dto.UnitDto;
+import com.cv.s2002orgservicepojo.entity.Unit;
 import com.cv.s2004orgservice.constant.ORGConstant;
-import com.cv.s2004orgservice.repository.BankUnitRepository;
-import com.cv.s2004orgservice.service.intrface.BankUnitService;
-import com.cv.s2004orgservice.service.mapper.BankUnitMapper;
+import com.cv.s2004orgservice.repository.UnitRepository;
+import com.cv.s2004orgservice.service.intrface.UnitService;
+import com.cv.s2004orgservice.service.mapper.UnitMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,24 +25,24 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_BANK_UNIT)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_UNIT)
 @Slf4j
 @Transactional(rollbackOn = Exception.class)
-public class BankUnitServiceImplementation implements BankUnitService {
+public class UnitServiceImplementation implements UnitService {
 
-    private final BankUnitRepository repository;
-    private final BankUnitMapper mapper;
+    private final UnitRepository repository;
+    private final UnitMapper mapper;
     private final ExceptionComponent exceptionComponent;
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
-    public BankUnitDto create(BankUnitDto dto) throws Exception {
+    public UnitDto create(UnitDto dto) throws Exception {
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
-    public BankUnitDto update(BankUnitDto dto) throws Exception {
+    public UnitDto update(UnitDto dto) throws Exception {
         return mapper.toDto(repository.findById(dto.getId()).map(entity -> {
             BeanUtils.copyProperties(dto, entity);
             repository.save(entity);
@@ -62,8 +62,8 @@ public class BankUnitServiceImplementation implements BankUnitService {
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
-    public BankUnitDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatusTrue(id, BankUnit.class)
+    public UnitDto readOne(String id) throws Exception {
+        return mapper.toDto(repository.findByIdAndStatusTrue(id, Unit.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
@@ -77,7 +77,7 @@ public class BankUnitServiceImplementation implements BankUnitService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public PaginationDto readAll(PaginationDto dto) throws Exception {
-        Page<BankUnit> page;
+        Page<Unit> page;
         if (StaticUtil.isSearchRequest(dto.getSearchField(), dto.getSearchValue())) {
             page = repository.findAll(repository.searchSpec(dto.getSearchField(), dto.getSearchValue()), StaticFunction.generatePageRequest.apply(dto));
         } else {
@@ -92,8 +92,8 @@ public class BankUnitServiceImplementation implements BankUnitService {
     @Override
     public Map<String, String> readIdAndNameMap() throws Exception {
         return repository.findAllByStatusTrue(
-                        BankUnit.class)
+                        Unit.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
-                .stream().collect(Collectors.toMap(BankUnit::getId, BankUnit::getName));
+                .stream().collect(Collectors.toMap(Unit::getId, Unit::getName));
     }
 }

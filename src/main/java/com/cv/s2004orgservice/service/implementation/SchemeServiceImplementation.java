@@ -62,11 +62,12 @@ public class SchemeServiceImplementation implements SchemeService {
                 }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
 
     }
+
     @CacheEvict(keyGenerator = "cacheKeyGenerator")
     @Override
     public SchemeDto readOne(String id) throws Exception {
         return mapper.toDto(repository.findByIdAndStatusTrue(id, Scheme.class)
-                .orElseThrow(()-> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
