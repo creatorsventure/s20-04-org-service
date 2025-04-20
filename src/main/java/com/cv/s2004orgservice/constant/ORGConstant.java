@@ -21,6 +21,8 @@ public class ORGConstant {
     public static final String APP_NAVIGATION_API_PASSWORD_RESET = "/reset-password";
     public static final String APP_NAVIGATION_API_PASSWORD_RESEND_EMAIL = "/resend-password-email";
     public static final String APP_NAVIGATION_API_PERMISSION = "/api/org-service/permission";
+    public static final String APP_NAVIGATION_API_SCHEME = "/api/org-service/scheme";
+    public static final String APP_NAVIGATION_API_BANK_UNIT = "/api/org-service/bank-unit";
 
     public static final int MENU_TYPE_PARENT = 1;
     public static final int MENU_TYPE_CHILD = 2;
