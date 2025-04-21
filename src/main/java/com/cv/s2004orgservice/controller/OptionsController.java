@@ -4,9 +4,9 @@ import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
-import com.cv.s2002orgservicepojo.dto.OptionDto;
+import com.cv.s2002orgservicepojo.dto.OptionsDto;
 import com.cv.s2004orgservice.constant.ORGConstant;
-import com.cv.s2004orgservice.service.intrface.OptionService;
+import com.cv.s2004orgservice.service.intrface.OptionsService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,35 +20,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(ORGConstant.APP_NAVIGATION_API_OPTION)
 @AllArgsConstructor
 @Slf4j
-public class OptionController implements GenericController<OptionDto> {
-    private OptionService service;
+public class OptionsController implements GenericController<OptionsDto> {
+    private OptionsService service;
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@RequestBody @Valid OptionDto dto, BindingResult result) {
+    public ResponseEntity<Object> create(@RequestBody @Valid OptionsDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
-                log.info("OptionController.create {}", result.getAllErrors());
+                log.info("OptionsController.create {}", result.getAllErrors());
                 return StaticUtil.getFailureResponse(result);
             }
             return StaticUtil.getSuccessResponse(service.create(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("OptionController.create {}", ExceptionUtils.getStackTrace(e));
+            log.error("OptionsController.create {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
 
     @PutMapping
     @Override
-    public ResponseEntity<Object> update(@RequestBody @Valid OptionDto dto, BindingResult result) {
+    public ResponseEntity<Object> update(@RequestBody @Valid OptionsDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
-                log.info("OptionController.update {}", result.getAllErrors());
+                log.info("OptionsController.update {}", result.getAllErrors());
                 return StaticUtil.getFailureResponse(result);
             }
             return StaticUtil.getSuccessResponse(service.update(dto), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("OptionController.update {}", ExceptionUtils.getStackTrace(e));
+            log.error("OptionsController.update {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -59,7 +59,7 @@ public class OptionController implements GenericController<OptionDto> {
         try {
             return StaticUtil.getSuccessResponse(service.updateStatus(id, status), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("OptionController.updateStatus {}", ExceptionUtils.getStackTrace(e));
+            log.error("OptionsController.updateStatus {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -68,10 +68,10 @@ public class OptionController implements GenericController<OptionDto> {
     @Override
     public ResponseEntity<Object> readOne(@RequestParam String id) {
         try {
-            log.info("OptionController.readOne {}", id);
+            log.info("OptionsController.readOne {}", id);
             return StaticUtil.getSuccessResponse(service.readOne(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("OptionController.readOne {}", ExceptionUtils.getStackTrace(e));
+            log.error("OptionsController.readOne {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -82,7 +82,7 @@ public class OptionController implements GenericController<OptionDto> {
         try {
             return StaticUtil.getSuccessResponse(service.readAll(dto), APIResponseType.OBJECT_LIST);
         } catch (Exception e) {
-            log.error("OptionController.readPage {}", ExceptionUtils.getStackTrace(e));
+            log.error("OptionsController.readPage {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -93,7 +93,7 @@ public class OptionController implements GenericController<OptionDto> {
         try {
             return StaticUtil.getSuccessResponse(service.readIdAndNameMap(), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("OptionController.readIdNameMapping {}", ExceptionUtils.getStackTrace(e));
+            log.error("OptionsController.readIdNameMapping {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
@@ -104,7 +104,7 @@ public class OptionController implements GenericController<OptionDto> {
         try {
             return StaticUtil.getSuccessResponse(service.delete(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
-            log.error("OptionController.delete {}", ExceptionUtils.getStackTrace(e));
+            log.error("OptionsController.delete {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }
