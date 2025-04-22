@@ -4,12 +4,12 @@ import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
-import com.cv.s2002orgservicepojo.dto.OptionDto;
-import com.cv.s2002orgservicepojo.entity.Option;
+import com.cv.s2002orgservicepojo.dto.OptionsDto;
+import com.cv.s2002orgservicepojo.entity.Options;
 import com.cv.s2004orgservice.constant.ORGConstant;
-import com.cv.s2004orgservice.repository.OptionRepository;
-import com.cv.s2004orgservice.service.intrface.OptionService;
-import com.cv.s2004orgservice.service.mapper.OptionMapper;
+import com.cv.s2004orgservice.repository.OptionsRepository;
+import com.cv.s2004orgservice.service.intrface.OptionsService;
+import com.cv.s2004orgservice.service.mapper.OptionsMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -24,22 +24,22 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_OPTION)
+@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_OPTIONS)
 @Transactional(rollbackOn = Exception.class)
-public class OptionServiceImplementation implements OptionService {
-    private final OptionRepository repository;
-    private final OptionMapper mapper;
+public class OptionsServiceImplementation implements OptionsService {
+    private final OptionsRepository repository;
+    private final OptionsMapper mapper;
     private final ExceptionComponent exceptionComponent;
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
-    public OptionDto create(OptionDto dto) throws Exception {
+    public OptionsDto create(OptionsDto dto) throws Exception {
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
-    public OptionDto update(OptionDto dto) throws Exception {
+    public OptionsDto update(OptionsDto dto) throws Exception {
         return mapper.toDto(repository.findById(dto.getId()).map(entity -> {
             BeanUtils.copyProperties(dto, entity);
             repository.save(entity);
@@ -59,8 +59,8 @@ public class OptionServiceImplementation implements OptionService {
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
-    public OptionDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatusTrue(id, Option.class).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+    public OptionsDto readOne(String id) throws Exception {
+        return mapper.toDto(repository.findByIdAndStatusTrue(id, Options.class).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -73,7 +73,7 @@ public class OptionServiceImplementation implements OptionService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public PaginationDto readAll(PaginationDto dto) throws Exception {
-        Page<Option> page;
+        Page<Options> page;
         if (StaticUtil.isSearchRequest(dto.getSearchField(), dto.getSearchValue())) {
             page = repository.findAll(repository.searchSpec(dto.getSearchField(), dto.getSearchValue()), StaticFunction.generatePageRequest.apply(dto));
         } else {
@@ -87,6 +87,6 @@ public class OptionServiceImplementation implements OptionService {
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public Map<String, String> readIdAndNameMap() throws Exception {
-        return repository.findAllByStatusTrue(Option.class).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)).stream().collect(Collectors.toMap(Option::getId, Option::getName));
+        return repository.findAllByStatusTrue(Options.class).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)).stream().collect(Collectors.toMap(Options::getId, Options::getName));
     }
 }

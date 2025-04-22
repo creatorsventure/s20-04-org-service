@@ -3,6 +3,7 @@ package com.cv.s2004orgservice.constant;
 public class ORGConstant {
 
 
+    public static final String APP_NAVIGATION_API_DASHBOARD = "/api/org-service/dashboard";
     public static final String APP_NAVIGATION_API_MENU = "/api/org-service/menu";
     public static final String APP_NAVIGATION_API_ORGANIZATION = "/api/org-service/organization";
     public static final String APP_NAVIGATION_API_MENU_TREE = "/menu-tree";
@@ -25,7 +26,7 @@ public class ORGConstant {
     public static final String APP_NAVIGATION_API_UNIT = "/api/org-service/unit";
     public static final String APP_NAVIGATION_API_ACTION = "/api/org-service/action";
     public static final String APP_NAVIGATION_API_CURRENCY = "/api/org-service/currency";
-    public static final String APP_NAVIGATION_API_OPTION = "/api/org-service/option";
+    public static final String APP_NAVIGATION_API_OPTIONS = "/api/org-service/options";
     public static final String APP_NAVIGATION_API_MERCHANT_CATEGORY = "/api/org-service/merchant-category";
     public static final String APP_NAVIGATION_API_ENGINE = "/api/org-service/engine";
 

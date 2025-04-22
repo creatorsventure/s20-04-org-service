@@ -4,9 +4,9 @@ import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
-import com.cv.s2002orgservicepojo.dto.OptionDto;
+import com.cv.s2002orgservicepojo.dto.OptionsDto;
 import com.cv.s2004orgservice.constant.ORGConstant;
-import com.cv.s2004orgservice.service.intrface.OptionService;
+import com.cv.s2004orgservice.service.intrface.OptionsService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,15 +17,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_OPTION)
+@RequestMapping(ORGConstant.APP_NAVIGATION_API_OPTIONS)
 @AllArgsConstructor
 @Slf4j
-public class OptionController implements GenericController<OptionDto> {
-    private OptionService service;
+public class OptionsController implements GenericController<OptionsDto> {
+    private OptionsService service;
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@RequestBody @Valid OptionDto dto, BindingResult result) {
+    public ResponseEntity<Object> create(@RequestBody @Valid OptionsDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
                 log.info("OptionController.create {}", result.getAllErrors());
@@ -40,7 +40,7 @@ public class OptionController implements GenericController<OptionDto> {
 
     @PutMapping
     @Override
-    public ResponseEntity<Object> update(@RequestBody @Valid OptionDto dto, BindingResult result) {
+    public ResponseEntity<Object> update(@RequestBody @Valid OptionsDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
                 log.info("OptionController.update {}", result.getAllErrors());
