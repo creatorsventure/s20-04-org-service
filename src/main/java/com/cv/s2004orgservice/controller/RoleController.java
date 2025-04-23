@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_ROLE)
+@RequestMapping(ApplicationConstant.APP_NAVIGATION_API_ROLE)
 @AllArgsConstructor
 @Slf4j
 public class RoleController implements GenericController<RoleDto> {
@@ -111,7 +111,7 @@ public class RoleController implements GenericController<RoleDto> {
         }
     }
 
-    @PostMapping(ORGConstant.APP_NAVIGATION_API_ROLE_LOAD_MENU)
+    @PostMapping(ApplicationConstant.APP_NAVIGATION_API_ROLE_LOAD_MENU)
     public ResponseEntity<Object> loadRoleMenu(@RequestBody List<String> roleIds) {
         try {
             return StaticUtil.getSuccessResponse(service.loadRoleMenu(roleIds), APIResponseType.OBJECT_ONE);

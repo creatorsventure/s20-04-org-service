@@ -17,7 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_MENU)
+@RequestMapping(ApplicationConstant.APP_NAVIGATION_API_MENU)
 @AllArgsConstructor
 @Slf4j
 public class MenuController implements GenericController<MenuDto> {
@@ -112,7 +112,7 @@ public class MenuController implements GenericController<MenuDto> {
         }
     }
 
-    @GetMapping(ORGConstant.APP_NAVIGATION_API_MENU_TREE)
+    @GetMapping(ApplicationConstant.APP_NAVIGATION_API_MENU_TREE)
     public ResponseEntity<Object> readMenuAsTree() {
         try {
             return StaticUtil.getSuccessResponse(service.readMenuAsTree(), APIResponseType.OBJECT_ONE);

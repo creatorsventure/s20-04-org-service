@@ -1,5 +1,6 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.component.RepositoryRegistry;
 import com.cv.s2002orgservicepojo.dto.CountDto;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_DASHBOARD)
+@CacheConfig(cacheNames = ApplicationConstant.APP_NAVIGATION_API_DASHBOARD)
 @Transactional(rollbackOn = Exception.class)
 public class DashboardServiceImplementation implements DashboardService {
 

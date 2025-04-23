@@ -1,9 +1,9 @@
 package com.cv.s2004orgservice.controller;
 
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.AuthInfoDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s10coreservice.exception.ExceptionComponent;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.AuthenticationService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_AUTHENTICATION)
+@RequestMapping(ApplicationConstant.APP_NAVIGATION_API_AUTHENTICATION)
 @AllArgsConstructor
 @Slf4j
 public class AuthenticationController {
@@ -27,7 +27,7 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
     private ExceptionComponent exceptionComponent;
 
-    @PostMapping(ORGConstant.APP_NAVIGATION_API_AUTHENTICATION_LOGIN)
+    @PostMapping(ApplicationConstant.APP_NAVIGATION_API_AUTHENTICATION_LOGIN)
     public ResponseEntity<Object> login(@RequestBody @Valid AuthInfoDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
@@ -43,7 +43,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping(ORGConstant.APP_NAVIGATION_API_AUTHENTICATION_REFRESH_TOKEN)
+    @PostMapping(ApplicationConstant.APP_NAVIGATION_API_AUTHENTICATION_REFRESH_TOKEN)
     public ResponseEntity<Object> refreshToken(@RequestBody @Valid AuthInfoDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
@@ -59,7 +59,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping(ORGConstant.APP_NAVIGATION_API_AUTHENTICATION_LOGOUT)
+    @PostMapping(ApplicationConstant.APP_NAVIGATION_API_AUTHENTICATION_LOGOUT)
     public ResponseEntity<Object> logout(@RequestBody @Valid AuthInfoDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {

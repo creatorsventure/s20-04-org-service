@@ -12,7 +12,6 @@ import com.cv.s2002orgservicepojo.dto.UserDetailDto;
 import com.cv.s2002orgservicepojo.entity.Password;
 import com.cv.s2002orgservicepojo.entity.Role;
 import com.cv.s2002orgservicepojo.entity.UserDetail;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.PasswordRepository;
 import com.cv.s2004orgservice.repository.RoleRepository;
 import com.cv.s2004orgservice.repository.UserDetailRepository;
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_USER_DETAIL)
+@CacheConfig(cacheNames = ApplicationConstant.APP_NAVIGATION_API_USER_DETAIL)
 @Slf4j
 @Transactional(rollbackOn = Exception.class)
 public class UserDetailServiceImplementation implements UserDetailService {

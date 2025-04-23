@@ -1,5 +1,6 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_MENU)
+@CacheConfig(cacheNames = ApplicationConstant.APP_NAVIGATION_API_MENU)
 @Transactional(rollbackOn = Exception.class)
 public class MenuServiceImplementation implements MenuService {
 
@@ -103,9 +104,9 @@ public class MenuServiceImplementation implements MenuService {
 
     @Override
     public List<MenuTreeDto> readMenuAsTree() throws Exception {
-        List<Menu> parents = repository.findAllByMenuTypeAndStatusTrue(ORGConstant.MENU_TYPE_PARENT);
+        List<Menu> parents = repository.findAllByMenuTypeAndStatusTrue(ApplicationConstant.MENU_TYPE_PARENT);
 
-        List<Menu> children = repository.findAllByMenuTypeAndStatusTrue(ORGConstant.MENU_TYPE_CHILD);
+        List<Menu> children = repository.findAllByMenuTypeAndStatusTrue(ApplicationConstant.MENU_TYPE_CHILD);
 
         // Group child menus by rootMenuId for faster lookup
         Map<String, List<Menu>> childrenByRootMenuId = children.stream()

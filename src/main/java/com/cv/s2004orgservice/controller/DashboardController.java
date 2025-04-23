@@ -1,5 +1,6 @@
 package com.cv.s2004orgservice.controller;
 
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.DashboardService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_DASHBOARD)
+@RequestMapping(ApplicationConstant.APP_NAVIGATION_API_DASHBOARD)
 @AllArgsConstructor
 @Slf4j
 public class DashboardController {

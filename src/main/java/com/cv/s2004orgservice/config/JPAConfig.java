@@ -45,7 +45,7 @@ public class JPAConfig {
     AuditorAware<String> auditorProvider() {
         return () -> {
             try {
-                return Optional.of(StaticUtil.extractHeader(ORGConstant.X_HEADER_USER_ID));
+                return Optional.of(StaticUtil.extractHeader(ApplicationConstant.X_HEADER_USER_ID));
             } catch (Exception e) {
                 log.error("Error in getting auditor provider", e);
                 return Optional.of(ApplicationConstant.APPLICATION_UNKNOWN_USER);

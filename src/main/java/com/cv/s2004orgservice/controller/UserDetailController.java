@@ -5,7 +5,6 @@ import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2002orgservicepojo.dto.UserDetailDto;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.UserDetailService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
@@ -17,7 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_USER_DETAIL)
+@RequestMapping(ApplicationConstant.APP_NAVIGATION_API_USER_DETAIL)
 @AllArgsConstructor
 @Slf4j
 public class UserDetailController implements GenericController<UserDetailDto> {
@@ -109,7 +108,7 @@ public class UserDetailController implements GenericController<UserDetailDto> {
         }
     }
 
-    @GetMapping(ORGConstant.APP_NAVIGATION_API_USER_DETAIL_COUNT)
+    @GetMapping(ApplicationConstant.APP_NAVIGATION_API_USER_DETAIL_COUNT)
     public ResponseEntity<Object> getCount() {
         try {
             return StaticUtil.getSuccessResponse(service.getCount(), APIResponseType.OBJECT_ONE);

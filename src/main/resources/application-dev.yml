@@ -1,8 +1,8 @@
 spring:
   application:
-    name: s20-04-org-service
-  #config:
-    #import: classpath:ValidationMessages.properties
-#Server
+    name: s20-04-org-service-v1
+
 server:
   port: 8020
+  servlet:
+    context-path: '/api/v1/org-service'

@@ -1,5 +1,6 @@
 package com.cv.s2004orgservice.controller;
 
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2002orgservicepojo.dto.PasswordDto;
 import com.cv.s2004orgservice.constant.ORGConstant;
@@ -14,7 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD)
+@RequestMapping(ApplicationConstant.APP_NAVIGATION_API_PASSWORD)
 @AllArgsConstructor
 @Slf4j
 public class PasswordController {
@@ -35,7 +36,7 @@ public class PasswordController {
         }
     }
 
-    @GetMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_ACTIVATE_ACCOUNT)
+    @GetMapping(ApplicationConstant.APP_NAVIGATION_API_PASSWORD_ACTIVATE_ACCOUNT)
     public ResponseEntity<Object> activateAccount(@RequestParam String id) throws Exception {
         try {
             return StaticUtil.getSuccessResponse(service.activateAccount(id), APIResponseType.OBJECT_ONE);
@@ -45,7 +46,7 @@ public class PasswordController {
         }
     }
 
-    @GetMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_FORGOT)
+    @GetMapping(ApplicationConstant.APP_NAVIGATION_API_PASSWORD_FORGOT)
     public ResponseEntity<Object> forgotPassword(@RequestParam String userId) throws Exception {
         try {
             return StaticUtil.getSuccessResponse(service.forgotPassword(userId), APIResponseType.OBJECT_ONE);
@@ -55,7 +56,7 @@ public class PasswordController {
         }
     }
 
-    @PostMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_RESET)
+    @PostMapping(ApplicationConstant.APP_NAVIGATION_API_PASSWORD_RESET)
     public ResponseEntity<Object> resetPassword(@RequestBody @Valid PasswordDto dto, BindingResult result) {
         try {
             if (result.hasErrors()) {
@@ -69,7 +70,7 @@ public class PasswordController {
         }
     }
 
-    @GetMapping(ORGConstant.APP_NAVIGATION_API_PASSWORD_RESEND_EMAIL)
+    @GetMapping(ApplicationConstant.APP_NAVIGATION_API_PASSWORD_RESEND_EMAIL)
     public ResponseEntity<Object> resendPasswordEmail(@RequestParam String id) {
         try {
             return StaticUtil.getSuccessResponse(service.resendPasswordEmail(id), APIResponseType.OBJECT_ONE);

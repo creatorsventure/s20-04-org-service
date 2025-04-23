@@ -17,7 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ORGConstant.APP_NAVIGATION_API_PERMISSION)
+@RequestMapping(ApplicationConstant.APP_NAVIGATION_API_PERMISSION)
 @AllArgsConstructor
 @Slf4j
 public class PermissionController implements GenericController<PermissionDto> {

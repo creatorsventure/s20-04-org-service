@@ -28,7 +28,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_PASSWORD)
+@CacheConfig(cacheNames = ApplicationConstant.APP_NAVIGATION_API_PASSWORD)
 @Transactional(rollbackOn = Exception.class)
 public class PasswordServiceImplementation implements PasswordService {
 

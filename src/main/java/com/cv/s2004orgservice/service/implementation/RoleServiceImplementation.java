@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_ROLE)
+@CacheConfig(cacheNames = ApplicationConstant.APP_NAVIGATION_API_ROLE)
 @Transactional(rollbackOn = Exception.class)
 public class RoleServiceImplementation implements RoleService {
     private final RoleRepository repository;
@@ -187,10 +187,10 @@ public class RoleServiceImplementation implements RoleService {
             menuList.add(menu);
 
             // If it's a parent menu, fetch and add its children
-            if (ORGConstant.MENU_TYPE_PARENT == menu.getMenuType()) {
+            if (ApplicationConstant.MENU_TYPE_PARENT == menu.getMenuType()) {
                 var children = menuRepository.findAllByRootMenuIdAndMenuTypeAndStatusTrue(
                         menu.getId(),
-                        ORGConstant.MENU_TYPE_CHILD
+                        ApplicationConstant.MENU_TYPE_CHILD
                 ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
 
                 menuList.addAll(children);

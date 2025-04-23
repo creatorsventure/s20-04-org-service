@@ -1,5 +1,6 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = ORGConstant.APP_NAVIGATION_API_PERMISSION)
+@CacheConfig(cacheNames = ApplicationConstant.APP_NAVIGATION_API_PERMISSION)
 @Transactional(rollbackOn = Exception.class)
 public class PermissionServiceImplementation implements PermissionService {
     private final PermissionRepository repository;
