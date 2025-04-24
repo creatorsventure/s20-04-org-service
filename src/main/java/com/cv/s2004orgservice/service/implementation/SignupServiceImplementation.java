@@ -17,7 +17,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -54,7 +53,7 @@ public class SignupServiceImplementation implements SignupService {
                     .name(signupDto.getOrganizationCode() + "_role")
                     .description(signupDto.getOrganizationCode() + "_role")
                     .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
-                    .organizationList(List.of(organizationEntity))
+                    .organization(organizationEntity)
                     .permissionList(permissionRepository.findAllByStatusTrue(
                             Permission.class
                     ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)))
@@ -72,7 +71,7 @@ public class SignupServiceImplementation implements SignupService {
                             .mobileNumber(signupDto.getMobileNumber())
                             .email(signupDto.getEmail())
                             .status(ApplicationConstant.APPLICATION_STATUS_INACTIVE)
-                            .roleList(List.of(roleEntity))
+                            .role(roleEntity)
                             .build());
 
             // log.info("Hash Password {}", passwordEncoder.encode(signupDto.getPassword()));

@@ -112,9 +112,9 @@ public class RoleController implements GenericController<RoleDto> {
     }
 
     @PostMapping(ApplicationConstant.APP_NAVIGATION_API_ROLE_LOAD_MENU)
-    public ResponseEntity<Object> loadRoleMenu(@RequestBody List<String> roleIds) {
+    public ResponseEntity<Object> loadRoleMenu(@RequestBody String roleId) {
         try {
-            return StaticUtil.getSuccessResponse(service.loadRoleMenu(roleIds), APIResponseType.OBJECT_ONE);
+            return StaticUtil.getSuccessResponse(service.loadRoleMenu(roleId), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
             log.error("RoleController.loadRoleMenu {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);

@@ -5,8 +5,7 @@ import com.cv.s10coreservice.dto.AuthInfoDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.component.JWTComponent;
 import com.cv.s10coreservice.service.component.Sha256HashComponent;
-import com.cv.s2002orgservicepojo.entity.Organization;
-import com.cv.s2002orgservicepojo.entity.Role;
+import com.cv.s2002orgservicepojo.entity.Permission;
 import com.cv.s2002orgservicepojo.entity.Token;
 import com.cv.s2002orgservicepojo.entity.UserDetail;
 import com.cv.s2004orgservice.repository.TokenRepository;
@@ -82,12 +81,9 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
                 .userId(userDetail.getUserId())
                 .name(userDetail.getName())
                 .email(userDetail.getEmail())
-                .roleIds(userDetail.getRoleList().stream().map(Role::getId).collect(Collectors.toList()))
-                .organizationIds(
-                        userDetail.getRoleList().stream()
-                                .flatMap(role -> role.getOrganizationList().stream()
-                                        .map(Organization::getId))
-                                .collect(Collectors.toList()))
+                .roleId(userDetail.getRole().getId())
+                .permissions(userDetail.getRole().getPermissionList().stream().map(Permission::getPermissionCode).collect(Collectors.toList()))
+                .organizationId(userDetail.getRole().getOrganization().getId())
                 .token(createAccessToken(userDetail))
                 .refreshToken(createAndStoreRefreshToken(userDetail))
                 .build();

@@ -57,9 +57,8 @@ public class UserDetailServiceImplementation implements UserDetailService {
     @Override
     public UserDetailDto create(UserDetailDto dto) throws Exception {
         var entity = mapper.toEntity(dto);
-        entity.setRoleList(roleRepository.findAllByStatusTrueAndIdIn(
-                dto.getSelectedRoleIds(),
-                Role.class
+        entity.setRole(roleRepository.findByIdAndStatusTrue(
+                dto.getRoleId(), Role.class
         ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
         String tempPassword = UUID.randomUUID().toString();
         entity = repository.save(entity);
@@ -91,12 +90,8 @@ public class UserDetailServiceImplementation implements UserDetailService {
     public UserDetailDto update(UserDetailDto dto) throws Exception {
         return mapper.toDto(repository.findById(dto.getId()).map(entity -> {
             BeanUtils.copyProperties(dto, entity);
-            entity.setRoleList(dto.getSelectedRoleIds().stream()
-                    .map(roleId -> roleRepository.findByIdAndStatusTrue(
-                                    roleId,
-                                    Role.class)
-                            .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)))
-                    .collect(Collectors.toList()));
+            entity.setRole(roleRepository.findByIdAndStatusTrue(dto.getRoleId(), Role.class)
+                    .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
             repository.save(entity);
             return entity;
         }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
@@ -118,7 +113,7 @@ public class UserDetailServiceImplementation implements UserDetailService {
         return repository.findByIdAndStatusTrue(id, UserDetail.class)
                 .map(entity -> {
                     var dto = mapper.toDto(entity);
-                    dto.setSelectedRoleIds(entity.getRoleList().stream().map(Role::getId).toList());
+                    dto.setRoleId(entity.getRole().getId());
                     return dto;
                 })
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface RoleService extends GenericService<RoleDto> {
 
-    List<SideNaveDto> loadRoleMenu(List<String> roleIds) throws Exception;
+    List<SideNaveDto> loadRoleMenu(String roleId) throws Exception;
 }

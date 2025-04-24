@@ -11,7 +11,6 @@ import com.cv.s2002orgservicepojo.entity.Menu;
 import com.cv.s2002orgservicepojo.entity.Organization;
 import com.cv.s2002orgservicepojo.entity.Permission;
 import com.cv.s2002orgservicepojo.entity.Role;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.MenuRepository;
 import com.cv.s2004orgservice.repository.OrganizationRepository;
 import com.cv.s2004orgservice.repository.PermissionRepository;
@@ -79,7 +78,7 @@ public class RoleServiceImplementation implements RoleService {
         return repository.findByIdAndStatusTrue(id, Role.class)
                 .map(entity -> {
                     RoleDto dto = mapper.toDto(entity);
-                    dto.setSelectedOrganizationIds(entity.getOrganizationList().stream().map(Organization::getId).toList());
+                    dto.setOrganizationId(entity.getOrganization().getId());
                     dto.setSelectedPermissionIds(entity.getPermissionList().stream().map(Permission::getId).toList());
                     try {
                         dto.setSelectedMenuIds(loadMenuIdsForEdit(entity));
@@ -166,11 +165,11 @@ public class RoleServiceImplementation implements RoleService {
 
     private void createRoleEntity(RoleDto dto, Role entity) {
         // Set Organization
-        var organizations = organizationRepository.findAllByStatusTrueAndIdIn(
-                dto.getSelectedOrganizationIds(),
+        var organizations = organizationRepository.findByIdAndStatusTrue(
+                dto.getOrganizationId(),
                 Organization.class
         ).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
-        entity.setOrganizationList(organizations);
+        entity.setOrganization(organizations);
 
         // Set Permissions
         var permissions = permissionRepository.findAllByStatusTrueAndIdIn(
@@ -201,12 +200,12 @@ public class RoleServiceImplementation implements RoleService {
     }
 
     @Override
-    public List<SideNaveDto> loadRoleMenu(List<String> roleIds) throws Exception {
+    public List<SideNaveDto> loadRoleMenu(String roleId) throws Exception {
         Set<Menu> rootMenus = new HashSet<>();
         Set<Menu> childMenus = new HashSet<>();
 
         // Step 1: Load all roles in one pass, avoid repeated DB calls
-        List<Role> roles = roleRepository.findAllByStatusTrueAndIdIn(roleIds)
+        List<Role> roles = roleRepository.findByIdAndStatusTrue(roleId, Role.class).map(List::of)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
 
         // Step 2: Classify menus
