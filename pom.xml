@@ -54,6 +54,7 @@
         <org.mapstruct.version>1.6.2</org.mapstruct.version>
         <org.projectlombok.version>1.18.36</org.projectlombok.version>
         <spring-cloud.version>2024.0.1</spring-cloud.version>
+        <spring-doc-version>2.8.6</spring-doc-version>
 
         <org-service-pojo-version>0.0.70-SNAPSHOT</org-service-pojo-version>
         <notify-service-pojo-version>0.0.28-SNAPSHOT</notify-service-pojo-version>
@@ -107,6 +108,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId> <!-- or webflux-ui -->
+            <version>${spring-doc-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
