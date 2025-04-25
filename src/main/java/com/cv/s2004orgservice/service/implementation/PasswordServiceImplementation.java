@@ -43,11 +43,15 @@ public class PasswordServiceImplementation implements PasswordService {
     private final PasswordRepository passwordRepository;
 
     public PasswordDto changePassword(PasswordDto dto) throws Exception {
-        var entity = mapper.toEntity(dto);
-        var userEntity = userDetailRepository.findByUserIdIgnoreCaseAndStatusTrue(dto.getUserDetailId())
+        var userEntity = userDetailRepository
+                .findByUserIdIgnoreCaseAndStatusTrue(dto.getUserDetailId())
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
-        constructEntity(dto, entity, userEntity);
-        return mapper.toDto(repository.save(entity));
+        var passwordEntity = userEntity.getPassword();
+        if (passwordEntity == null) {
+            throw exceptionComponent.expose("app.message.failure.password.not.found", true);
+        }
+        constructPasswordEntity(dto, passwordEntity, userEntity);
+        return mapper.toDto(repository.save(passwordEntity));
     }
 
     @Override
@@ -79,17 +83,17 @@ public class PasswordServiceImplementation implements PasswordService {
     @Override
     public boolean resetPassword(PasswordDto dto) throws Exception {
         var actualId = encryptionComponent.decrypt(dto.getUserDetailId());
-        var entity = mapper.toEntity(dto);
         var userEntity = userDetailRepository.findByIdAndStatusTrue(actualId, UserDetail.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
-        if (userEntity.getPassword().isStatus() || userEntity.getPassword().getModifiedAt().plusHours(1).isBefore(LocalDateTime.now())) {
+        var passwordEntity = userEntity.getPassword();
+        if (passwordEntity.isStatus() || passwordEntity.getModifiedAt().plusHours(1).isBefore(LocalDateTime.now())) {
             throw exceptionComponent.expose("app.message.failure.link.expired", true);
-        } else {
-            constructEntity(dto, entity, userEntity);
-            repository.save(entity);
-            return true;
         }
+        constructPasswordEntity(dto, passwordEntity, userEntity);
+        repository.save(passwordEntity);
+        return true;
     }
+
 
     @Override
     public boolean resendPasswordEmail(String id) throws Exception {
@@ -130,16 +134,18 @@ public class PasswordServiceImplementation implements PasswordService {
         return true;
     }
 
-    private void constructEntity(PasswordDto dto, Password entity, UserDetail userEntity) throws Exception {
-        if (passwordEncoder.matches(dto.getPassword(), userEntity.getPassword().getHashPassword())) {
+    private void constructPasswordEntity(PasswordDto dto, Password passwordEntity, UserDetail userEntity) throws Exception {
+        if (passwordEncoder.matches(dto.getPassword(), passwordEntity.getHashPassword())) {
             throw exceptionComponent.expose("app.message.failure.same.password", true);
         }
-        entity.setId(userEntity.getPassword().getId());
-        entity.setName(userEntity.getName());
-        entity.setHashPassword(passwordEncoder.encode(dto.getPassword()));
-        entity.setEncryptedPassword(encryptionComponent.encrypt(dto.getPassword()));
-        entity.setStatus(ApplicationConstant.APPLICATION_STATUS_ACTIVE);
-        entity.setUserDetail(userEntity);
+
+        passwordEntity.setName(userEntity.getName());
+        passwordEntity.setHashPassword(passwordEncoder.encode(dto.getPassword()));
+        passwordEntity.setEncryptedPassword(encryptionComponent.encrypt(dto.getPassword()));
+        passwordEntity.setStatus(ApplicationConstant.APPLICATION_STATUS_ACTIVE);
+        passwordEntity.setModifiedAt(LocalDateTime.now());
+        passwordEntity.setModifiedBy(userEntity.getName());
     }
+
 
 }
