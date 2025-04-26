@@ -1,7 +1,7 @@
 package com.cv.s2004orgservice.service.implementation;
 
 import com.cv.s0402notifyservicepojo.dto.RecipientDto;
-import com.cv.s0402notifyservicepojo.helper.NotifiyHelper;
+import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
@@ -70,7 +70,7 @@ public class UserDetailServiceImplementation implements UserDetailService {
                 .hashPassword(passwordEncoder.encode(tempPassword))
                 .userDetail(entity)
                 .build());
-        kafkaProducer.notify(NotifiyHelper.notifyPasswordReset(
+        kafkaProducer.notify(NotifyHelper.notifyPasswordReset(
                 RecipientDto.builder()
                         .name(entity.getName())
                         .email(entity.getEmail())

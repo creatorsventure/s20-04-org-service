@@ -1,13 +1,20 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.s0402notifyservicepojo.dto.RecipientDto;
+import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.PaginationDto;
+import com.cv.s10coreservice.dto.VerifySignupDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
+import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
+import com.cv.s10coreservice.service.component.JsonComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.UnitDto;
 import com.cv.s2002orgservicepojo.entity.*;
 import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.*;
+import com.cv.s2004orgservice.service.component.KafkaProducer;
 import com.cv.s2004orgservice.service.intrface.UnitService;
 import com.cv.s2004orgservice.service.mapper.UnitMapper;
 import jakarta.transaction.Transactional;
@@ -17,9 +24,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -32,12 +42,15 @@ public class UnitServiceImplementation implements UnitService {
 
     private final UnitRepository repository;
     private final UnitMapper mapper;
-    private final ExceptionComponent exceptionComponent;
-
     private final ActionRepository actionRepository;
     private final CurrencyRepository currencyRepository;
     private final EngineRepository engineRepository;
     private final OptionsRepository optionsRepository;
+    private final ExceptionComponent exceptionComponent;
+    private final KafkaProducer kafkaProducer;
+    private final Environment environment;
+    private final HybridEncryptionComponent encryptionComponent;
+    private final JsonComponent jsonComponent;
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
     @Override
@@ -127,5 +140,35 @@ public class UnitServiceImplementation implements UnitService {
                         Unit.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true))
                 .stream().collect(Collectors.toMap(Unit::getId, Unit::getName));
+    }
+
+    @Override
+    public boolean signup(String id) throws Exception {
+        var entity = repository.findByIdAndStatusTrue(id, Unit.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
+
+        kafkaProducer.notify(NotifyHelper.notifyAccountSignUp(
+                RecipientDto.builder()
+                        .name(entity.getAdminName())
+                        .email(entity.getAdminEmail())
+                        .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
+                        .build(),
+                Locale.ENGLISH,
+                environment.getProperty("app.api-gateway.unit-service.activate-account-url")
+                        + encryptionComponent.encrypt(
+                        jsonComponent.toJson(VerifySignupDto.builder()
+                                .adminEmail(entity.getAdminEmail())
+                                .adminName(entity.getAdminName())
+                                .adminUserId(entity.getAdminUserId())
+                                .adminMobileNumber(entity.getAdminMobileNumber())
+                                .adminCountryCode(entity.getAdminCountryCode())
+                                .entityId(entity.getId())
+                                .entityName(entity.getName())
+                                .otpRequired(entity.getOptions().isLoginOTP())
+                                .createdAt(LocalDateTime.now())
+                                .build())),
+                entity.getId()
+        ));
+        return true;
     }
 }

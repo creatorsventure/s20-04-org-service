@@ -1,14 +1,14 @@
 package com.cv.s2004orgservice.service.implementation;
 
 import com.cv.s0402notifyservicepojo.dto.RecipientDto;
-import com.cv.s0402notifyservicepojo.helper.NotifiyHelper;
+import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
+import com.cv.s10coreservice.config.props.CoreSecurityProperties;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s2002orgservicepojo.dto.PasswordDto;
 import com.cv.s2002orgservicepojo.entity.Password;
 import com.cv.s2002orgservicepojo.entity.UserDetail;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.PasswordRepository;
 import com.cv.s2004orgservice.repository.UserDetailRepository;
 import com.cv.s2004orgservice.service.component.KafkaProducer;
@@ -41,6 +41,7 @@ public class PasswordServiceImplementation implements PasswordService {
     private final KafkaProducer kafkaProducer;
     private final Environment environment;
     private final PasswordRepository passwordRepository;
+    private final CoreSecurityProperties securityProperties;
 
     public PasswordDto changePassword(PasswordDto dto) throws Exception {
         var entity = mapper.toEntity(dto);
@@ -57,7 +58,7 @@ public class PasswordServiceImplementation implements PasswordService {
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
         if (entity.isStatus()) {
             throw exceptionComponent.expose("app.message.failure.user.already.activated", true);
-        } else if (entity.getCreatedAt().plusHours(1).isBefore(LocalDateTime.now())) {
+        } else if (entity.getCreatedAt().plusHours(securityProperties.getEmailLinkExpiryHrs()).isBefore(LocalDateTime.now())) {
             throw exceptionComponent.expose("app.message.failure.link.expired", true);
         } else {
             entity.setStatus(ApplicationConstant.APPLICATION_STATUS_ACTIVE);
@@ -82,7 +83,7 @@ public class PasswordServiceImplementation implements PasswordService {
         var entity = mapper.toEntity(dto);
         var userEntity = userDetailRepository.findByIdAndStatusTrue(actualId, UserDetail.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
-        if (userEntity.getPassword().isStatus() || userEntity.getPassword().getModifiedAt().plusHours(1).isBefore(LocalDateTime.now())) {
+        if (userEntity.getPassword().isStatus() || userEntity.getPassword().getModifiedAt().plusHours(securityProperties.getEmailLinkExpiryHrs()).isBefore(LocalDateTime.now())) {
             throw exceptionComponent.expose("app.message.failure.link.expired", true);
         } else {
             constructEntity(dto, entity, userEntity);
@@ -115,7 +116,7 @@ public class PasswordServiceImplementation implements PasswordService {
     }
 
     private boolean sendPasswordResetEmail(UserDetail entity) throws Exception {
-        kafkaProducer.notify(NotifiyHelper.notifyPasswordReset(
+        kafkaProducer.notify(NotifyHelper.notifyPasswordReset(
                 RecipientDto.builder()
                         .name(entity.getName())
                         .email(entity.getEmail())

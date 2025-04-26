@@ -5,6 +5,7 @@ public class ORGConstant {
     public static final String APP_NAVIGATION_API_ORGANIZATION = "/organization";
     public static final String APP_NAVIGATION_API_SCHEME = "/scheme";
     public static final String APP_NAVIGATION_API_UNIT = "/unit";
+    public static final String APP_NAVIGATION_API_UNIT_SIGNUP = "/sign-up";
     public static final String APP_NAVIGATION_API_ACTION = "/action";
     public static final String APP_NAVIGATION_API_CURRENCY = "/currency";
     public static final String APP_NAVIGATION_API_OPTIONS = "/options";

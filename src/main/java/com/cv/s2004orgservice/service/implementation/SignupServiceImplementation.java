@@ -1,7 +1,7 @@
 package com.cv.s2004orgservice.service.implementation;
 
 import com.cv.s0402notifyservicepojo.dto.RecipientDto;
-import com.cv.s0402notifyservicepojo.helper.NotifiyHelper;
+import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
@@ -82,7 +82,7 @@ public class SignupServiceImplementation implements SignupService {
                     .hashPassword(passwordEncoder.encode(signupDto.getPassword()))
                     .userDetail(userDetail)
                     .build());
-            kafkaProducer.notify(NotifiyHelper.notifyActivateAccount(
+            kafkaProducer.notify(NotifyHelper.notifyActivateAccount(
                     RecipientDto.builder()
                             .name(signupDto.getName())
                             .email(signupDto.getEmail())

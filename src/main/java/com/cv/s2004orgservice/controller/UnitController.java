@@ -110,4 +110,14 @@ public class UnitController implements GenericController<UnitDto> {
         }
     }
 
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_UNIT_SIGNUP)
+    public ResponseEntity<Object> signUp(@RequestParam String id) {
+        try {
+            return StaticUtil.getSuccessResponse(service.signup(id), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("UnitController.signUp {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
 }
