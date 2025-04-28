@@ -155,6 +155,7 @@ public class UnitServiceImplementation implements UnitService {
                         .build(),
                 Locale.ENGLISH,
                 environment.getProperty("app.api-gateway.unit-service.activate-account-url")
+                        + entity.getId() + "/"
                         + encryptionComponent.encrypt(
                         jsonComponent.toJson(VerifySignupDto.builder()
                                 .adminEmail(entity.getAdminEmail())
@@ -164,6 +165,7 @@ public class UnitServiceImplementation implements UnitService {
                                 .adminCountryCode(entity.getAdminCountryCode())
                                 .entityId(entity.getId())
                                 .entityName(entity.getName())
+                                .entityCode(entity.getUnitCode())
                                 .otpRequired(entity.getOptions().isLoginOTP())
                                 .createdAt(LocalDateTime.now())
                                 .build())),
