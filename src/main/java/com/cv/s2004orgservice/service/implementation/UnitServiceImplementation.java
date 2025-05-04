@@ -12,11 +12,13 @@ import com.cv.s10coreservice.service.component.JsonComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.constant.ORGConstant;
+import com.cv.s2002orgservicepojo.dto.OptionsDto;
 import com.cv.s2002orgservicepojo.dto.UnitDto;
 import com.cv.s2002orgservicepojo.entity.*;
 import com.cv.s2004orgservice.repository.*;
 import com.cv.s2004orgservice.service.component.KafkaProducer;
 import com.cv.s2004orgservice.service.intrface.UnitService;
+import com.cv.s2004orgservice.service.mapper.OptionsMapper;
 import com.cv.s2004orgservice.service.mapper.UnitMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -47,6 +49,7 @@ public class UnitServiceImplementation implements UnitService {
     private final CurrencyRepository currencyRepository;
     private final EngineRepository engineRepository;
     private final OptionsRepository optionsRepository;
+    private final OptionsMapper optionsMapper;
     private final ExceptionComponent exceptionComponent;
     private final KafkaProducer kafkaProducer;
     private final Environment environment;
@@ -182,6 +185,13 @@ public class UnitServiceImplementation implements UnitService {
                 .map(unit -> ContextParamDto.builder()
                         .unitId(unit.getId())
                         .build())
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
+    }
+
+    @Override
+    public OptionsDto resolveUnitOptions(String unitId) throws Exception {
+        return repository.findById(unitId)
+                .map(unit -> optionsMapper.toDto(unit.getOptions()))
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 }

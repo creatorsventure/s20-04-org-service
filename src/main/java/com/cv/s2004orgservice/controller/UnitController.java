@@ -131,4 +131,15 @@ public class UnitController implements GenericController<UnitDto> {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<Object> resolveUnitOption(@RequestParam String id) {
+        try {
+            log.info("UnitController.resolveUnitOption {}", id);
+            return StaticUtil.getSuccessResponse(service.resolveUnitOptions(id), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("UnitController.resolveUnitOption {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
 }
