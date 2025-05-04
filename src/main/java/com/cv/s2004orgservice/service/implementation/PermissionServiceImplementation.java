@@ -7,7 +7,6 @@ import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
 import com.cv.s2002orgservicepojo.dto.PermissionDto;
 import com.cv.s2002orgservicepojo.entity.Permission;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.PermissionRepository;
 import com.cv.s2004orgservice.service.intrface.PermissionService;
 import com.cv.s2004orgservice.service.mapper.PermissionMapper;

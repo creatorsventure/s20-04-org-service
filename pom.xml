@@ -56,7 +56,7 @@
         <spring-cloud.version>2024.0.1</spring-cloud.version>
         <spring-doc-version>2.8.6</spring-doc-version>
 
-        <org-service-pojo-version>0.0.86-SNAPSHOT</org-service-pojo-version>
+        <org-service-pojo-version>0.0.98-SNAPSHOT</org-service-pojo-version>
         <notify-service-pojo-version>0.0.29-SNAPSHOT</notify-service-pojo-version>
     </properties>
     <dependencies>
@@ -108,6 +108,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>

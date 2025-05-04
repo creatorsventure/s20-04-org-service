@@ -6,7 +6,6 @@ import com.cv.s10coreservice.service.component.RepositoryRegistry;
 import com.cv.s2002orgservicepojo.dto.CountDto;
 import com.cv.s2002orgservicepojo.dto.DashboardDto;
 import com.cv.s2002orgservicepojo.entity.Menu;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.MenuRepository;
 import com.cv.s2004orgservice.service.intrface.DashboardService;
 import jakarta.transaction.Transactional;

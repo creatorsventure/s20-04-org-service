@@ -4,8 +4,8 @@ import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
+import com.cv.s2002orgservicepojo.constant.ORGConstant;
 import com.cv.s2002orgservicepojo.dto.UnitDto;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.UnitService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
@@ -116,6 +116,17 @@ public class UnitController implements GenericController<UnitDto> {
             return StaticUtil.getSuccessResponse(service.signup(id), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
             log.error("UnitController.signUp {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_UNIT_RESOLVE_ID)
+    public ResponseEntity<Object> resolveUnitId(@RequestParam String code) {
+        try {
+            log.info("UnitController.resolveUnitId {}", code);
+            return StaticUtil.getSuccessResponse(service.resolveUnitId(code), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("UnitController.resolveUnitId {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }

@@ -1,6 +1,7 @@
 package com.cv.s2004orgservice.service.implementation;
 
 import com.cv.s10coreservice.config.props.CoreSecurityProperties;
+import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.AuthInfoDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.component.JWTComponent;
@@ -93,8 +94,9 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
         return jwtComponent.generateAccessToken(
                 userDetail.getUserId(),
                 Map.ofEntries(
-                        Map.entry("id", userDetail.getId()),
-                        Map.entry("name", userDetail.getName())));
+                        Map.entry(ApplicationConstant.X_HEADER_USER_ID, userDetail.getUserId()),
+                        Map.entry(ApplicationConstant.X_HEADER_USER_NAME, userDetail.getName())
+                ));
     }
 
     private String createAndStoreRefreshToken(UserDetail userDetail) throws Exception {

@@ -2,7 +2,6 @@ package com.cv.s2004orgservice.config;
 
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.util.StaticUtil;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -45,7 +44,7 @@ public class JPAConfig {
     AuditorAware<String> auditorProvider() {
         return () -> {
             try {
-                return Optional.of(StaticUtil.extractHeader(ApplicationConstant.X_HEADER_USER_ID));
+                return Optional.of(StaticUtil.extractHeader(ApplicationConstant.X_HEADER_USER_NAME));
             } catch (Exception e) {
                 log.error("Error in getting auditor provider", e);
                 return Optional.of(ApplicationConstant.APPLICATION_UNKNOWN_USER);

@@ -5,7 +5,6 @@ import com.cv.s10coreservice.controller.generic.GenericController;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2002orgservicepojo.dto.MenuDto;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.MenuService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;

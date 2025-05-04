@@ -3,6 +3,7 @@ package com.cv.s2004orgservice.service.implementation;
 import com.cv.s0402notifyservicepojo.dto.RecipientDto;
 import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
 import com.cv.s10coreservice.constant.ApplicationConstant;
+import com.cv.s10coreservice.dto.ContextParamDto;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.dto.VerifySignupDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
@@ -10,9 +11,9 @@ import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s10coreservice.service.component.JsonComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
+import com.cv.s2002orgservicepojo.constant.ORGConstant;
 import com.cv.s2002orgservicepojo.dto.UnitDto;
 import com.cv.s2002orgservicepojo.entity.*;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.*;
 import com.cv.s2004orgservice.service.component.KafkaProducer;
 import com.cv.s2004orgservice.service.intrface.UnitService;
@@ -154,7 +155,7 @@ public class UnitServiceImplementation implements UnitService {
                         .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
                         .build(),
                 Locale.ENGLISH,
-                environment.getProperty("app.api-gateway.unit-service.activate-account-url")
+                environment.getProperty("app.unit-service.activate-account-url")
                         + entity.getId() + "/"
                         + encryptionComponent.encrypt(
                         jsonComponent.toJson(VerifySignupDto.builder()
@@ -172,5 +173,15 @@ public class UnitServiceImplementation implements UnitService {
                 entity.getId()
         ));
         return true;
+    }
+
+    @Cacheable(keyGenerator = "cacheKeyGenerator")
+    @Override
+    public ContextParamDto resolveUnitId(String code) throws Exception {
+        return repository.findByUnitCodeIgnoreCaseAndStatusTrue(code)
+                .map(unit -> ContextParamDto.builder()
+                        .unitId(unit.getId())
+                        .build())
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 }

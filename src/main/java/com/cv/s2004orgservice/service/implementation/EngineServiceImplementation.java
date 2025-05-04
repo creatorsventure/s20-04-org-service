@@ -4,9 +4,9 @@ import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
+import com.cv.s2002orgservicepojo.constant.ORGConstant;
 import com.cv.s2002orgservicepojo.dto.EngineDto;
 import com.cv.s2002orgservicepojo.entity.Engine;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.EngineRepository;
 import com.cv.s2004orgservice.service.intrface.EngineService;
 import com.cv.s2004orgservice.service.mapper.EngineMapper;
@@ -44,7 +44,7 @@ public class EngineServiceImplementation implements EngineService {
             BeanUtils.copyProperties(dto, entity);
             repository.save(entity);
             return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -54,13 +54,13 @@ public class EngineServiceImplementation implements EngineService {
             entity.setStatus(status);
             repository.save(entity);
             return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public EngineDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatusTrue(id, Engine.class).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        return mapper.toDto(repository.findByIdAndStatusTrue(id, Engine.class).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)

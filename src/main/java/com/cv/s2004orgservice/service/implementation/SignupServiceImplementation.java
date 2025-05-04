@@ -91,7 +91,7 @@ public class SignupServiceImplementation implements SignupService {
                             .status(ApplicationConstant.APPLICATION_STATUS_ACTIVE)
                             .build(),
                     Locale.ENGLISH,
-                    environment.getProperty("app.api-gateway.org-service.activate-account-url") + encryptionComponent.encrypt(userDetail.getId()),
+                    environment.getProperty("app.org-service.activate-account-url") + encryptionComponent.encrypt(userDetail.getId()),
                     userDetail.getId()
             ));
             return true;

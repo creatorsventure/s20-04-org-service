@@ -4,9 +4,9 @@ import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;
+import com.cv.s2002orgservicepojo.constant.ORGConstant;
 import com.cv.s2002orgservicepojo.dto.MerchantCategoryDto;
 import com.cv.s2002orgservicepojo.entity.MerchantCategory;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.repository.MerchantCategoryRepository;
 import com.cv.s2004orgservice.service.intrface.MerchantCategoryService;
 import com.cv.s2004orgservice.service.mapper.MerchantCategoryMapper;
@@ -44,7 +44,7 @@ public class MerchantCategoryServiceImplementation implements MerchantCategorySe
             BeanUtils.copyProperties(dto, entity);
             repository.save(entity);
             return entity;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)
@@ -54,13 +54,13 @@ public class MerchantCategoryServiceImplementation implements MerchantCategorySe
             entity.setStatus(status);
             repository.save(entity);
             return true;
-        }).orElseThrow(() -> exceptionComponent.expose("app.code.004", true));
+        }).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 
     @Cacheable(keyGenerator = "cacheKeyGenerator")
     @Override
     public MerchantCategoryDto readOne(String id) throws Exception {
-        return mapper.toDto(repository.findByIdAndStatusTrue(id, MerchantCategory.class).orElseThrow(() -> exceptionComponent.expose("app.code.004", true)));
+        return mapper.toDto(repository.findByIdAndStatusTrue(id, MerchantCategory.class).orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
 
     @CacheEvict(keyGenerator = "cacheKeyGenerator", allEntries = true)

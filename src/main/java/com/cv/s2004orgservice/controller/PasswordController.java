@@ -3,7 +3,6 @@ package com.cv.s2004orgservice.controller;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.enumeration.APIResponseType;
 import com.cv.s2002orgservicepojo.dto.PasswordDto;
-import com.cv.s2004orgservice.constant.ORGConstant;
 import com.cv.s2004orgservice.service.intrface.PasswordService;
 import com.cv.s2004orgservice.util.StaticUtil;
 import jakarta.validation.Valid;
