@@ -131,7 +131,7 @@ public class UnitController implements GenericController<UnitDto> {
         }
     }
 
-    @GetMapping
+    @GetMapping("test")
     public ResponseEntity<Object> resolveUnitOption(@RequestParam String id) {
         try {
             log.info("UnitController.resolveUnitOption {}", id);
