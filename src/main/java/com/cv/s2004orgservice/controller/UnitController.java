@@ -120,7 +120,7 @@ public class UnitController implements GenericController<UnitDto> {
         }
     }
 
-    @GetMapping(ORGConstant.APP_NAVIGATION_API_UNIT_RESOLVE_ID)
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_RESOLVE_UNIT_ID)
     public ResponseEntity<Object> resolveUnitId(@RequestParam String code) {
         try {
             log.info("UnitController.resolveUnitId {}", code);
@@ -131,13 +131,24 @@ public class UnitController implements GenericController<UnitDto> {
         }
     }
 
-    @GetMapping("test")
-    public ResponseEntity<Object> resolveUnitOption(@RequestParam String id) {
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_RESOLVE_OPTIONS)
+    public ResponseEntity<Object> resolveUnitOption(@RequestParam String unitId) {
         try {
-            log.info("UnitController.resolveUnitOption {}", id);
-            return StaticUtil.getSuccessResponse(service.resolveUnitOptions(id), APIResponseType.OBJECT_ONE);
+            log.info("UnitController.resolveUnitOption {}", unitId);
+            return StaticUtil.getSuccessResponse(service.resolveUnitOptions(unitId), APIResponseType.OBJECT_ONE);
         } catch (Exception e) {
             log.error("UnitController.resolveUnitOption {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_RESOLVE_UNIT_ID_NAME_MAPS)
+    public ResponseEntity<Object> resolveUnitIdNameMaps(@RequestParam String unitId) {
+        try {
+            log.info("UnitController.resolveUnitIdNameMaps {}", unitId);
+            return StaticUtil.getSuccessResponse(service.resolveUnitIdNameMaps(unitId), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("UnitController.resolveUnitIdNameMaps {}", ExceptionUtils.getStackTrace(e));
             return StaticUtil.getFailureResponse(e);
         }
     }

@@ -4,6 +4,7 @@ import com.cv.s0402notifyservicepojo.dto.RecipientDto;
 import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.ContextParamDto;
+import com.cv.s10coreservice.dto.IdNameMapDto;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.dto.VerifySignupDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
@@ -48,6 +49,7 @@ public class UnitServiceImplementation implements UnitService {
     private final ActionRepository actionRepository;
     private final CurrencyRepository currencyRepository;
     private final EngineRepository engineRepository;
+    private final SchemeRepository schemeRepository;
     private final OptionsRepository optionsRepository;
     private final OptionsMapper optionsMapper;
     private final ExceptionComponent exceptionComponent;
@@ -87,6 +89,8 @@ public class UnitServiceImplementation implements UnitService {
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
         entity.setEngineList(engineRepository.findAllByStatusTrueAndIdIn(dto.getSelectedEngineIds(), Engine.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
+        entity.setSchemeList(schemeRepository.findAllByStatusTrueAndIdIn(dto.getSelectedSchemeIds(), Scheme.class)
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
         entity.setOptions(optionsRepository.findByIdAndStatusTrue(dto.getSelectedOptionsId(), Options.class)
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true)));
     }
@@ -110,6 +114,7 @@ public class UnitServiceImplementation implements UnitService {
                     dto.setSelectedActionIds(entity.getActionList().stream().map(Action::getId).collect(Collectors.toList()));
                     dto.setSelectedCurrencyIds(entity.getCurrencyList().stream().map(Currency::getId).collect(Collectors.toList()));
                     dto.setSelectedEngineIds(entity.getEngineList().stream().map(Engine::getId).collect(Collectors.toList()));
+                    dto.setSelectedSchemeIds(entity.getSchemeList().stream().map(Scheme::getId).collect(Collectors.toList()));
                     dto.setSelectedOptionsId(entity.getOptions().getId());
                     return dto;
                 })
@@ -192,6 +197,18 @@ public class UnitServiceImplementation implements UnitService {
     public OptionsDto resolveUnitOptions(String unitId) throws Exception {
         return repository.findById(unitId)
                 .map(unit -> optionsMapper.toDto(unit.getOptions()))
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
+    }
+
+    @Override
+    public IdNameMapDto resolveUnitIdNameMaps(String unitId) throws Exception {
+        return repository.findById(unitId)
+                .map(unit -> IdNameMapDto.builder().idNameMaps(Map.of(
+                        "currency", unit.getCurrencyList().stream().collect(Collectors.toMap(Currency::getId, Currency::getName)),
+                        "action", unit.getActionList().stream().collect(Collectors.toMap(Action::getId, Action::getName)),
+                        "scheme", unit.getSchemeList().stream().collect(Collectors.toMap(Scheme::getId, Scheme::getName)),
+                        "engine", unit.getEngineList().stream().collect(Collectors.toMap(Engine::getId, Engine::getName))
+                )).build())
                 .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
     }
 }
