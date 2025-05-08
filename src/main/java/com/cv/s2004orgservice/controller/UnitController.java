@@ -142,6 +142,17 @@ public class UnitController implements GenericController<UnitDto> {
         }
     }
 
+    @GetMapping(ORGConstant.APP_NAVIGATION_API_RESOLVE_UNIT_SCHEME)
+    public ResponseEntity<Object> resolveUnitScheme(@RequestParam String unitId) {
+        try {
+            log.info("UnitController.resolveUnitScheme {}", unitId);
+            return StaticUtil.getSuccessResponse(service.resolveUnitScheme(unitId), APIResponseType.OBJECT_ONE);
+        } catch (Exception e) {
+            log.error("UnitController.resolveUnitScheme {}", ExceptionUtils.getStackTrace(e));
+            return StaticUtil.getFailureResponse(e);
+        }
+    }
+
     @GetMapping(ORGConstant.APP_NAVIGATION_API_RESOLVE_UNIT_ID_NAME_MAPS)
     public ResponseEntity<Object> resolveUnitIdNameMaps(@RequestParam String unitId) {
         try {

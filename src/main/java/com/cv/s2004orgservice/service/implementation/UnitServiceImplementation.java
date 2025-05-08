@@ -201,6 +201,15 @@ public class UnitServiceImplementation implements UnitService {
     }
 
     @Override
+    public IdNameMapDto resolveUnitScheme(String unitId) throws Exception {
+        return repository.findById(unitId)
+                .map(unit -> IdNameMapDto.builder().idNameMaps(Map.of(
+                        "scheme", unit.getSchemeList().stream().collect(Collectors.toMap(Scheme::getId, Scheme::getName))
+                )).build())
+                .orElseThrow(() -> exceptionComponent.expose("app.message.failure.object.unavailable", true));
+    }
+
+    @Override
     public IdNameMapDto resolveUnitIdNameMaps(String unitId) throws Exception {
         return repository.findById(unitId)
                 .map(unit -> IdNameMapDto.builder().idNameMaps(Map.of(
