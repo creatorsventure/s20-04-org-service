@@ -1,5 +1,6 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.core.s09coresecurity.component.HybridEncryptionComponent;
 import com.cv.s0402notifyservicepojo.dto.RecipientDto;
 import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
 import com.cv.s10coreservice.constant.ApplicationConstant;
@@ -8,7 +9,6 @@ import com.cv.s10coreservice.dto.IdNameMapDto;
 import com.cv.s10coreservice.dto.PaginationDto;
 import com.cv.s10coreservice.dto.VerifySignupDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
-import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s10coreservice.service.component.JsonComponent;
 import com.cv.s10coreservice.service.function.StaticFunction;
 import com.cv.s10coreservice.util.StaticUtil;

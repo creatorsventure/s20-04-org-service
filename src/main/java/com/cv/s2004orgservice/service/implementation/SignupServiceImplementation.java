@@ -1,10 +1,10 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.core.s09coresecurity.component.HybridEncryptionComponent;
 import com.cv.s0402notifyservicepojo.dto.RecipientDto;
 import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.exception.ExceptionComponent;
-import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s2002orgservicepojo.dto.SignupDto;
 import com.cv.s2002orgservicepojo.entity.*;
 import com.cv.s2004orgservice.repository.*;

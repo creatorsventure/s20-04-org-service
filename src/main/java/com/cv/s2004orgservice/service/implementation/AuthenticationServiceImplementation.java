@@ -1,11 +1,11 @@
 package com.cv.s2004orgservice.service.implementation;
 
-import com.cv.s10coreservice.config.props.CoreSecurityProperties;
+import com.cv.core.s09coresecurity.component.JWTComponent;
+import com.cv.core.s09coresecurity.component.Sha256HashComponent;
+import com.cv.core.s09coresecurity.config.properties.CoreSecurityProperties;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.dto.AuthInfoDto;
 import com.cv.s10coreservice.exception.ExceptionComponent;
-import com.cv.s10coreservice.service.component.JWTComponent;
-import com.cv.s10coreservice.service.component.Sha256HashComponent;
 import com.cv.s2002orgservicepojo.entity.Permission;
 import com.cv.s2002orgservicepojo.entity.Token;
 import com.cv.s2002orgservicepojo.entity.UserDetail;

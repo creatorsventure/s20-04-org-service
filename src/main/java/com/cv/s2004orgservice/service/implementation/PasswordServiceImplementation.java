@@ -1,11 +1,11 @@
 package com.cv.s2004orgservice.service.implementation;
 
+import com.cv.core.s09coresecurity.component.HybridEncryptionComponent;
+import com.cv.core.s09coresecurity.config.properties.CoreSecurityProperties;
 import com.cv.s0402notifyservicepojo.dto.RecipientDto;
 import com.cv.s0402notifyservicepojo.helper.NotifyHelper;
-import com.cv.s10coreservice.config.props.CoreSecurityProperties;
 import com.cv.s10coreservice.constant.ApplicationConstant;
 import com.cv.s10coreservice.exception.ExceptionComponent;
-import com.cv.s10coreservice.service.component.HybridEncryptionComponent;
 import com.cv.s2002orgservicepojo.dto.PasswordDto;
 import com.cv.s2002orgservicepojo.entity.Password;
 import com.cv.s2002orgservicepojo.entity.UserDetail;
